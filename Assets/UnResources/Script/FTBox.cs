@@ -9,6 +9,7 @@ public class FTBox : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
+	//fuck.
 	void Update () {
 	
 	}
