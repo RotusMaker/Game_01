@@ -109,7 +109,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             get
             {
- #if !MOBILE_INPUT
+#if !MOBILE_INPUT
 				return movementSettings.Running;
 #else
 	            return false;
@@ -128,11 +128,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void Update()
         {
-            RotateView();
+			//head bobbing.
+            //RotateView();
 
             if (CrossPlatformInputManager.GetButtonDown("Jump") && !m_Jump)
             {
                 m_Jump = true;
+
+				//각도 제어.
+				//Vector3 oldAngle = transform.eulerAngles;
+				//transform.eulerAngles = new Vector3(oldAngle.x, oldAngle.y + 10f, oldAngle.z);
             }
         }
 
@@ -211,12 +216,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private Vector2 GetInput()
         {
-            
             Vector2 input = new Vector2
                 {
                     x = CrossPlatformInputManager.GetAxis("Horizontal"),
                     y = CrossPlatformInputManager.GetAxis("Vertical")
                 };
+
+			//Debug.Log (string.Format("Input Value: {0} {1}",input.x, input.y));
+			//자동으로 앞으로 감. (0~1값).
+			input.y = 1f;
+
 			movementSettings.UpdateDesiredTargetSpeed(input);
             return input;
         }
