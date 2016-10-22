@@ -89,6 +89,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private Vector3 m_GroundContactNormal;
         private bool m_Jump, m_PreviouslyGrounded, m_Jumping, m_IsGrounded;
 
+		//좌우이동 강제 값.
+		private float m_InputValue = 0f;
+		private float m_PrevPositionX = 0f;
+		private float m_InputDelayTime = 0f;
 
         public Vector3 Velocity
         {
@@ -156,12 +160,37 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 desiredMove.x = desiredMove.x*movementSettings.CurrentTargetSpeed;
                 desiredMove.z = desiredMove.z*movementSettings.CurrentTargetSpeed;
                 desiredMove.y = desiredMove.y*movementSettings.CurrentTargetSpeed;
+
+				//강제 좌우 이동.
+				desiredMove.x = 0f;
+
                 if (m_RigidBody.velocity.sqrMagnitude <
                     (movementSettings.CurrentTargetSpeed*movementSettings.CurrentTargetSpeed))
                 {
                     m_RigidBody.AddForce(desiredMove*SlopeMultiplier(), ForceMode.Impulse);
                 }
             }
+
+			if (m_InputValue != 0f && (Time.time - m_InputDelayTime) > 0.15f) {
+				Debug.Log ("### Move Pos: " + m_InputValue.ToString ());
+				Vector3 curPos = this.transform.localPosition;
+				float curPosValue = m_PrevPositionX + m_InputValue;
+				if (curPosValue >= 5f) {
+					curPosValue = 5f;
+				} else if (curPosValue <= -5f) {
+					curPosValue = -5f;
+				} else {
+					curPosValue = 0f;
+				}
+				m_PrevPositionX = curPosValue;
+				m_RigidBody.transform.localPosition = new Vector3 (curPosValue, curPos.y, curPos.z);
+
+				m_InputValue = 0f;
+				m_InputDelayTime = Time.time;
+			} 
+			else {
+				m_InputValue = 0f;
+			}
 
             if (m_IsGrounded)
             {
@@ -225,6 +254,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			//Debug.Log (string.Format("Input Value: {0} {1}",input.x, input.y));
 			//자동으로 앞으로 감. (0~1값).
 			input.y = 1f;
+			//input.x = 0f;
+
+			//좌우 이동.
+			if (input.x > 0) {
+				m_InputValue = 5f;
+				//input.x = 1f;
+			}
+			else if (input.x < 0){
+				m_InputValue = -5f;
+				//input.x = -1f;
+			}
 
 			movementSettings.UpdateDesiredTargetSpeed(input);
             return input;
