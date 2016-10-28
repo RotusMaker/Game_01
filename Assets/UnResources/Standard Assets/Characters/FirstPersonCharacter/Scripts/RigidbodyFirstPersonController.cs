@@ -277,7 +277,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			//input.x = 0f;
 
 			//좌우 이동 입력.
-			if (m_eMoveState == eMoveState.Ready && m_RigidBody.transform.localPosition.y <= 2f) {
+			if (m_eMoveState == eMoveState.Ready /*&& m_RigidBody.transform.localPosition.y <= 2f*/) {
 				m_eMoveState = eMoveState.Ing;
 				if (input.x > 0) {
 					if (m_eCurrentPos == eCharacterPos.Center) {
