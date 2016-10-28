@@ -89,10 +89,20 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private Vector3 m_GroundContactNormal;
         private bool m_Jump, m_PreviouslyGrounded, m_Jumping, m_IsGrounded;
 
-		//좌우이동 강제 값.
-		private float m_InputValue = 0f;
-		private float m_PrevPositionX = 0f;
-		private float m_InputDelayTime = 0f;
+		//좌우 이동 상태.
+		public enum eCharacterPos
+		{
+			Center, Right, Left
+		}
+		public enum eMoveState
+		{
+			Ready, Ing
+		}
+		private eCharacterPos m_eCurrentPos = eCharacterPos.Center;
+		private eMoveState m_eMoveState = eMoveState.Ready;
+
+		private Vector3 m_vecPurposePos = Vector3.zero;
+		private float m_fPurposeX = 0f;
 
         public Vector3 Velocity
         {
@@ -171,26 +181,36 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 }
             }
 
-			if (m_InputValue != 0f && (Time.time - m_InputDelayTime) > 0.15f) {
-				Debug.Log ("### Move Pos: " + m_InputValue.ToString ());
-				Vector3 curPos = this.transform.localPosition;
-				float curPosValue = m_PrevPositionX + m_InputValue;
-				if (curPosValue >= 5f) {
-					curPosValue = 5f;
-				} else if (curPosValue <= -5f) {
-					curPosValue = -5f;
-				} else {
-					curPosValue = 0f;
+			if (m_eMoveState == eMoveState.Ing) {
+				//Debug.Log ("### Move Pos: " + m_InputValue.ToString ());
+				m_vecPurposePos = m_RigidBody.transform.localPosition;
+				float currentX = m_vecPurposePos.x;
+				switch (m_eCurrentPos) {
+				case eCharacterPos.Center:
+					m_fPurposeX = 0f;
+					break;
+				case eCharacterPos.Left:
+					m_fPurposeX = -5f;
+					break;
+				case eCharacterPos.Right:
+					m_fPurposeX = 5f;
+					break;
 				}
-				m_PrevPositionX = curPosValue;
-				m_RigidBody.transform.localPosition = new Vector3 (curPosValue, curPos.y, curPos.z);
 
-				m_InputValue = 0f;
-				m_InputDelayTime = Time.time;
+				if (currentX > m_fPurposeX) {
+					currentX -= Time.deltaTime * 20f;
+				} 
+				else if (currentX < m_fPurposeX) {
+					currentX += Time.deltaTime * 20f;
+				}
+
+				if (Math.Abs (currentX - m_fPurposeX) <= 0.5f) {
+					currentX = m_fPurposeX;
+					m_eMoveState = eMoveState.Ready;
+				}
+
+				m_RigidBody.transform.localPosition = new Vector3 (currentX, m_vecPurposePos.y, m_vecPurposePos.z);
 			} 
-			else {
-				m_InputValue = 0f;
-			}
 
             if (m_IsGrounded)
             {
@@ -256,14 +276,27 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			input.y = 1f;
 			//input.x = 0f;
 
-			//좌우 이동.
-			if (input.x > 0) {
-				m_InputValue = 5f;
-				//input.x = 1f;
-			}
-			else if (input.x < 0){
-				m_InputValue = -5f;
-				//input.x = -1f;
+			//좌우 이동 입력.
+			if (m_eMoveState == eMoveState.Ready && m_RigidBody.transform.localPosition.y <= 2f) {
+				m_eMoveState = eMoveState.Ing;
+				if (input.x > 0) {
+					if (m_eCurrentPos == eCharacterPos.Center) {
+						m_eCurrentPos = eCharacterPos.Right;
+					} 
+					else if (m_eCurrentPos == eCharacterPos.Left) {
+						m_eCurrentPos = eCharacterPos.Center;
+					} 
+					//input.x = 1f;
+				} 
+				else if (input.x < 0) {
+					if (m_eCurrentPos == eCharacterPos.Center) {
+						m_eCurrentPos = eCharacterPos.Left;
+					} 
+					else if (m_eCurrentPos == eCharacterPos.Right) {
+						m_eCurrentPos = eCharacterPos.Center;
+					}
+					//input.x = -1f;
+				}
 			}
 
 			movementSettings.UpdateDesiredTargetSpeed(input);
