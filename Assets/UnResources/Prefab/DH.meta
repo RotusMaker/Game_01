@@ -1,7 +1,19 @@
 fileFormatVersion: 2
+<<<<<<< .mine
+guid: eb3564c5b7f5d8f4992f919dbd9914ac
+||||||| .r8
+guid: 6b0ab0314764b9646b553cce85716f9d
+=======
 guid: 6460d434b61fcea40afbc5cf34780e52
+>>>>>>> .r20
 folderAsset: yes
+<<<<<<< .mine
+timeCreated: 1476283692
+||||||| .r8
+timeCreated: 1476446749
+=======
 timeCreated: 1476278010
+>>>>>>> .r20
 licenseType: Free
 DefaultImporter:
   userData: 
