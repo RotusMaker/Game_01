@@ -60,7 +60,7 @@ public class Moving : MonoBehaviour
 			return;
 		}
 		
-		switch (m_eDirection) 
+		switch (m_eDirection)
 		{
 		case eDirection.Right:
 			transform.Translate (m_fSideVariant * Time.deltaTime, 0f, 0f);
@@ -70,6 +70,11 @@ public class Moving : MonoBehaviour
 			break;
 		default:
 			break;
+		}
+
+		if (Input.GetKeyDown (KeyCode.Space))
+		{
+			SetState(ePlayerState.Dash);
 		}
 	}
 
@@ -118,8 +123,7 @@ public class Moving : MonoBehaviour
 				if (dx < 0) 
 				{
 					// left
-					//m_eDirection = eDirection.Left;
-					SetState(ePlayerState.Dash);
+					m_eDirection = eDirection.Left;
 				} 
 				else 
 				{
