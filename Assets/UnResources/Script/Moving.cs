@@ -29,7 +29,7 @@ public class Moving : MonoBehaviour
 	public float m_fTouchInputGap = 5f;	// 입력 시 점프,좌우 입력 감도.
 	public float m_fJumpPower = 1000f;	// 점프 force.
 	public float m_fSideVariant = 5f;	// 좌우 이동 값.
-	public float groundCheckDistance = 0.500005f;	// 땅에 서 있는지 체크.
+	public float groundCheckDistance = 1f;	// 땅에 서 있는지 체크.
 	public float m_fDashTime = 0.1f;		// dash 지속 시간.
 	public int m_fDashMultiVelocity = 30;	// dash할때 속도 배율.(올릴 수록 dash 속도와 거리 증가)
 
@@ -98,8 +98,8 @@ public class Moving : MonoBehaviour
 		case"begin": 
 			//Debug.Log( "down:" + x + "," + y );
 			break;
-		case"end": 
-			Debug.Log ("end:" + x + "," + y + ", d:" + dx + "," + dy);
+		case"end":
+			//Debug.Log ("end:" + x + "," + y + ", d:" + dx + "," + dy);
 			if (Mathf.Abs (dx) <= m_fTouchInputGap) 
 			{
 				// jump
@@ -158,24 +158,33 @@ public class Moving : MonoBehaviour
 		if (m_Capsule == null) 
 		{
 			Debug.LogError ("Not Found Capsule");
+			m_Capsule = this.GetComponent<CapsuleCollider> ();
 			return;
 		}
 
 		Ray ray = new Ray (transform.position, Vector3.down);
 		RaycastHit hitInfo;
-		if (Physics.Raycast (ray, out hitInfo, 1f)) {
-			if (hitInfo.distance <= groundCheckDistance)
+		if (Physics.Raycast (ray, out hitInfo, 1f)) 
+		{
+			if (hitInfo.distance <= groundCheckDistance) 
 			{
-				if (m_IsJumped) {
-					if (hitInfo.distance >= groundCheckDistance) {
+				if (m_IsJumped) 
+				{
+					if (hitInfo.distance >= groundCheckDistance) 
+					{
 						m_IsJumped = false;
 					}
-					//Debug.Log ("distance: " + hitInfo.distance.ToString ());
+					Debug.Log ("jump distance: " + hitInfo.distance.ToString ());
 				}
-				else {
+				else
+				{
+					Debug.Log ("ground distance: " + hitInfo.distance.ToString ());
 					SetState (ePlayerState.Run);
 				}
-				//Debug.Log ("distance: " + hitInfo.distance.ToString ());
+			} 
+			else 
+			{
+				//Debug.Log ("no check distance: " + hitInfo.distance.ToString ());
 			}
 		}
 	}
