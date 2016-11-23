@@ -19,7 +19,7 @@ public class Moving : MonoBehaviour
 		Jump,
 		TwoJump,
 		Dash,
-		Dead,
+		Dead,	// y <= -10f, forward ray cast distance <= 1f, death zone
 	}
 	private ePlayerState m_ePlayerState = ePlayerState.Run;
 
@@ -41,10 +41,18 @@ public class Moving : MonoBehaviour
 		InputListener.GetInstance.begin0 += onTouch;
 		InputListener.GetInstance.end0 += onTouch;
 		InputListener.GetInstance.move0 += onTouch;
+	}
 
-		m_rigidbody = this.GetComponent<Rigidbody> ();
-		//m_rigidbody.useGravity = false;
-		m_Capsule = this.GetComponent<CapsuleCollider>();
+	void OnEnable()
+	{
+		if (m_rigidbody == null)
+		{
+			m_rigidbody = this.GetComponent<Rigidbody> ();
+		}
+		if (m_Capsule == null)
+		{
+			m_Capsule = this.GetComponent<CapsuleCollider>();
+		}
 	}
 
 	void Update()
@@ -94,6 +102,18 @@ public class Moving : MonoBehaviour
 		}
 
 		GroundCheck();
+	}
+
+	// 충돌 체크.
+	void OnCollisionEnter(Collision collision)
+	{
+		// death zone 감지.
+	}
+
+	// 트리거 감지.
+	void OnTriggerEnter(Collider other)
+	{
+		// trigger 체크.
 	}
 
 	void onTouch( string type, int id, float x, float y, float dx, float dy)
@@ -168,28 +188,49 @@ public class Moving : MonoBehaviour
 
 		Ray ray = new Ray (transform.position, Vector3.down);
 		RaycastHit hitInfo;
-		if (Physics.Raycast (ray, out hitInfo, 1f)) 
+		if (Physics.Raycast (ray, out hitInfo, 5f)) 
 		{
 			if (hitInfo.distance <= groundCheckDistance) 
 			{
 				if (m_IsJumped) 
 				{
-					if (hitInfo.distance >= groundCheckDistance) 
+					if (hitInfo.distance >= groundCheckDistance)
 					{
 						m_IsJumped = false;
 					}
-					Debug.Log ("jump distance: " + hitInfo.distance.ToString ());
+					//Debug.Log ("jump distance: " + hitInfo.distance.ToString ());
 				}
 				else
 				{
-					Debug.Log ("ground distance: " + hitInfo.distance.ToString ());
+					//Debug.Log ("ground distance: " + hitInfo.distance.ToString ());
 					SetState (ePlayerState.Run);
 				}
-			} 
-			else 
-			{
-				//Debug.Log ("no check distance: " + hitInfo.distance.ToString ());
 			}
 		}
+	}
+
+	private void ForwardCheck()
+	{
+		if (m_Capsule == null) 
+		{
+			Debug.LogError ("Not Found Capsule");
+			m_Capsule = this.GetComponent<CapsuleCollider> ();
+			return;
+		}
+
+		Ray ray = new Ray (transform.position, Vector3.forward);
+		RaycastHit hitInfo;
+		if (Physics.Raycast (ray, out hitInfo, 5f))		// layermask 정하기.
+		{
+			// 한 프레임 당 이동거리 = 초기 위치 + velocity * deltaTime 보다 작으면
+			Debug.Log(string.Format("forward object:{0} distance:{1}",hitInfo.collider.name,hitInfo.distance));
+			// Debug.DrawRay
+		}
+	}
+
+	private void OverPositionCheck()
+	{
+		// 좌,우 정방향 상태로.
+		// 아래 일정 값 지나면 죽음 상태로.
 	}
 }
