@@ -3,6 +3,8 @@ using System.Collections;
 
 public class GameManager : MonoSingleton<GameManager>
 {
+	private GameObject m_player;
+	
 	public enum eGameState
 	{
 		None,
@@ -13,7 +15,6 @@ public class GameManager : MonoSingleton<GameManager>
 		Result
 	}
 	private eGameState m_gameState = eGameState.None;
-
 	public eGameState GetGameState()
 	{
 		return m_gameState;
@@ -30,7 +31,6 @@ public class GameManager : MonoSingleton<GameManager>
 
 	void Start () 
 	{
-		LoadPrefabManager.instance.LoadPrefab ("r", 0);
 	}
 	
 	void Update () 
@@ -48,5 +48,23 @@ public class GameManager : MonoSingleton<GameManager>
 
 	private void EndState(eGameState state)
 	{
+	}
+
+	private void ResetGame()
+	{
+	}
+	private void LoadGame(string sectionName, int stageNumber)
+	{
+	}
+
+	IEnumerator Loading()
+	{
+		// 게임 리소스 로드 및 진행상황 UI.
+		yield return null;
+	}
+	IEnumerator Ready()
+	{
+		// 게임 진행 카운트 다운 및 UI 초기화 애니메이션.
+		yield return null;
 	}
 }
