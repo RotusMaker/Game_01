@@ -4,15 +4,7 @@ using System.Collections;
 [RequireComponent (typeof (Rigidbody))]
 [RequireComponent(typeof (CapsuleCollider))]
 public class Moving : MonoBehaviour 
-{
-	public enum eCurrentPos
-	{
-		Center = 0,
-		Right = 1,
-		Left = 2
-	}
-	private eCurrentPos m_eCurrentPos = eCurrentPos.Center;
-	
+{	
 	public enum eDirection
 	{
 		None = 0,
@@ -47,6 +39,8 @@ public class Moving : MonoBehaviour
 	private bool m_IsJumped = false;
 	private float m_fDashTimer = 0f;
 
+	private int m_nCurrentPos = 0;
+
 	private Vector3 m_vecOriginPos;
 
 	void Start ()
@@ -60,7 +54,7 @@ public class Moving : MonoBehaviour
 		m_fMaxRightPos = m_vecOriginPos.x + m_fSideMoveGap;
 		m_fMaxLeftPos = m_vecOriginPos.x - m_fSideMoveGap;
 
-		m_eCurrentPos = eCurrentPos.Center;
+		m_nCurrentPos = 0;
 	}
 
 	void OnEnable()
@@ -87,60 +81,31 @@ public class Moving : MonoBehaviour
 			}
 			return;
 		}
-		
+
+		float purpose = 0f;
 		switch (m_eDirection)
 		{
 		case eDirection.Right:
-			if (m_eCurrentPos != eCurrentPos.Right) {
-				// 오른쪽으로 이동.
-				transform.Translate (m_fSideVariant * Time.deltaTime, 0f, 0f);
-			} else {
-				transform.localPosition = new Vector3 (m_fMaxRightPos, transform.localPosition.y, transform.localPosition.z);
-				m_eDirection = eDirection.None;
-			}
+			// 오른쪽으로 이동.
+			transform.Translate (m_fSideVariant * Time.deltaTime, 0f, 0f);
 
-			if (m_eCurrentPos == eCurrentPos.Left) {
-				// 센터에 도착한 경우 이동 중지.
-				if (m_vecOriginPos.x <= transform.localPosition.x) {
-					transform.localPosition = new Vector3 (m_vecOriginPos.x, transform.localPosition.y, transform.localPosition.z);
-					m_eDirection = eDirection.None;
-					m_eCurrentPos = eCurrentPos.Center;
-				}
-			} 
-			else if (m_eCurrentPos == eCurrentPos.Center) {
-				// 센터 보다 우측에 있는 경우.(이동 목표: 우측끝)
-				if (m_fMaxRightPos <= transform.localPosition.x) 
-				{
-					transform.localPosition = new Vector3 (m_fMaxRightPos, transform.localPosition.y, transform.localPosition.z);
-					m_eDirection = eDirection.None;
-					m_eCurrentPos = eCurrentPos.Right;
-				}
+			purpose = m_vecOriginPos.x + ((m_nCurrentPos + 1) * m_fSideMoveGap);
+
+			if (purpose <= transform.localPosition.x) {
+				transform.localPosition = new Vector3 (purpose, transform.localPosition.y, transform.localPosition.z);
+				m_eDirection = eDirection.None;
+				m_nCurrentPos += 1;
 			}
 			break;
 		case eDirection.Left:
-			if (m_eCurrentPos != eCurrentPos.Left) {
-				transform.Translate (-m_fSideVariant * Time.deltaTime, 0f, 0f);
-			} else {
-				transform.localPosition = new Vector3 (m_fMaxLeftPos, transform.localPosition.y, transform.localPosition.z);
-				m_eDirection = eDirection.None;
-			}
+			transform.Translate (-m_fSideVariant * Time.deltaTime, 0f, 0f);
 
-			if (m_eCurrentPos == eCurrentPos.Right) {
-				// 센터에 도착한 경우 이동 중지.
-				if (m_vecOriginPos.x >= transform.localPosition.x) {
-					transform.localPosition = new Vector3 (m_vecOriginPos.x, transform.localPosition.y, transform.localPosition.z);
-					m_eDirection = eDirection.None;
-					m_eCurrentPos = eCurrentPos.Center;
-				}
-			} 
-			else if (m_eCurrentPos == eCurrentPos.Center) {
-				// 센터 보다 좌측에 있는 경우.(이동 목표: 좌측끝)
-				if (m_fMaxLeftPos >= transform.localPosition.x) 
-				{
-					transform.localPosition = new Vector3 (m_fMaxLeftPos, transform.localPosition.y, transform.localPosition.z);
-					m_eDirection = eDirection.None;
-					m_eCurrentPos = eCurrentPos.Left;
-				}
+			purpose = m_vecOriginPos.x + ((m_nCurrentPos - 1) * m_fSideMoveGap);
+
+			if (purpose >= transform.localPosition.x) {
+				transform.localPosition = new Vector3 (purpose, transform.localPosition.y, transform.localPosition.z);
+				m_eDirection = eDirection.None;
+				m_nCurrentPos -= 1;
 			}
 			break;
 		default:
