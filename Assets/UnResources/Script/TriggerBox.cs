@@ -8,6 +8,7 @@ public class TriggerBox : MonoBehaviour
 	public enum eTriggerType
 	{
 		Disable = 0,
+		Swamp,
 		Go,
 		Cam_Rotation,
 	}
@@ -33,7 +34,7 @@ public class TriggerBox : MonoBehaviour
 		{
 			for(int i=0; i<m_listTriggingData.Length; i++)
 			{
-				string method = GetMethodName(m_listTriggingData[i].method);
+				string method = GetEnterMethodName(m_listTriggingData[i].method);
 				if (string.IsNullOrEmpty(method))
 				{
 					continue;
@@ -43,12 +44,45 @@ public class TriggerBox : MonoBehaviour
 		}
 	}
 
-	string GetMethodName(eTriggerType type)
+	void OnTriggerExit(Collider other)
+	{
+		if (m_listTriggingData != null && m_listTriggingData.Length > 0)
+		{
+			for(int i=0; i<m_listTriggingData.Length; i++)
+			{
+				string method = GetExitMethodName(m_listTriggingData[i].method);
+				if (string.IsNullOrEmpty(method))
+				{
+					continue;
+				}
+				m_listTriggingData[i].target.SendMessage(method);
+			}
+		}
+	}
+
+	string GetEnterMethodName(eTriggerType type)
 	{
 		switch(type)
 		{
-		case eTriggerType.Go:	return "Go";
-		default: return string.Empty;
+		case eTriggerType.Go:	
+			return "Go";
+		case eTriggerType.Swamp:
+			return "EnterSwamp";
+		default: 
+			return string.Empty;
+		}
+	}
+
+	string GetExitMethodName(eTriggerType type)
+	{
+		switch(type)
+		{
+		case eTriggerType.Go:	
+			return "GoExit";
+		case eTriggerType.Swamp:
+			return "ExitSwamp";
+		default: 
+			return string.Empty;
 		}
 	}
 }

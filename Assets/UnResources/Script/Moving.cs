@@ -266,6 +266,9 @@ public class Moving : MonoBehaviour
 		RaycastHit hitInfo;
 		if (Physics.Raycast (ray, out hitInfo, m_fFowardRayCheck))		// layermask 정하기.
 		{
+			if (hitInfo.collider.CompareTag ("TriggerBox")) {
+				return;
+			}
 			// 한 프레임 당 이동거리 = 초기 위치 + velocity * deltaTime 보다 작으면
 			//Debug.Log(string.Format("forward object:{0} distance:{1}",hitInfo.collider.name,hitInfo.distance));
 			SetState(ePlayerState.Dead);
