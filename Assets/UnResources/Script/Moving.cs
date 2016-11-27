@@ -35,6 +35,11 @@ public class Moving : MonoBehaviour
 	public float m_fFowardRayCheck = 2f;	// 정면 추돌 거리.
 	public GroundCheck m_groundCheck;
 
+#if UNITY_EDITOR
+	// Debug UI.
+	public UnityEngine.UI.Text m_txtVelocity;
+#endif
+
 	private float m_fMaxRightPos = 0f;
 	private float m_fMaxLeftPos = 0f;
 	private float m_fDashTimer = 0f;
@@ -143,26 +148,36 @@ public class Moving : MonoBehaviour
 			}
 		}
 
-		ForwardCheck();
-
 		// Ground Check.
 		if (m_ePlayerState == ePlayerState.Jump || m_ePlayerState == ePlayerState.TwoJump) {
 			if (m_groundCheck.isTrigging) {
 				SetState (ePlayerState.Run);
 			}
 		}
+
+		// 충돌 체크.
+		ForwardCheck();
+
+#if UNITY_EDITOR
+		// Debug Msg.
+		if (m_txtVelocity != null) {
+			m_txtVelocity.text = string.Format ("Velocity:{0}",m_rigidbody.velocity);
+		}
+#endif
 	}
 
 	// 충돌 체크.
 	void OnCollisionEnter(Collision collision)
 	{
 		// death zone 감지.
+		Debug.Log(collision.gameObject.name);
 	}
 
 	// 트리거 감지.
 	void OnTriggerEnter(Collider other)
 	{
 		// trigger 체크.
+		Debug.Log(other.gameObject.name);
 	}
 
 	void onTouch( string type, int id, float x, float y, float dx, float dy)

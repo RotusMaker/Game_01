@@ -2,17 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public enum eTriggerType
+{
+	Disable = 0,
+	Swamp,
+	Go,
+	Cam_Rotation,
+};
+
 [RequireComponent (typeof (BoxCollider))]
 public class TriggerBox : MonoBehaviour 
 {
-	public enum eTriggerType
-	{
-		Disable = 0,
-		Swamp,
-		Go,
-		Cam_Rotation,
-	}
-	
 	[System.Serializable]
 	public struct TriggingData
 	{
@@ -64,8 +64,8 @@ public class TriggerBox : MonoBehaviour
 	{
 		switch(type)
 		{
-		case eTriggerType.Go:	
-			return "Go";
+		case eTriggerType.Go:
+			return "EnterGo";
 		case eTriggerType.Swamp:
 			return "EnterSwamp";
 		default: 
@@ -77,8 +77,8 @@ public class TriggerBox : MonoBehaviour
 	{
 		switch(type)
 		{
-		case eTriggerType.Go:	
-			return "GoExit";
+		case eTriggerType.Go:
+			return "ExitGo";
 		case eTriggerType.Swamp:
 			return "ExitSwamp";
 		default: 
