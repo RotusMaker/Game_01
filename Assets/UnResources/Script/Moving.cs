@@ -203,7 +203,8 @@ public class Moving : MonoBehaviour
 					SetState (ePlayerState.TwoJump);
 					OnJump ();
 				}
-				m_eDirection = eDirection.None;
+				// 점프할 때 좌우이동 멈춤.
+				//m_eDirection = eDirection.None;
 			}
 			else 
 			{
