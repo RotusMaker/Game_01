@@ -71,6 +71,11 @@ public class Moving : MonoBehaviour
 
 	void Update()
 	{
+		if (m_ePlayerState == ePlayerState.Dead) 
+		{
+			return;
+		}
+		
 		if (m_ePlayerState == ePlayerState.Dash) 
 		{
 			m_fDashTimer += Time.deltaTime;
@@ -120,6 +125,11 @@ public class Moving : MonoBehaviour
 
 	void FixedUpdate()
 	{
+		if (m_ePlayerState == ePlayerState.Dead) 
+		{
+			return;
+		}
+		
 		if (m_rigidbody != null)
 		{
 			if (m_ePlayerState == ePlayerState.Dash) 
@@ -134,6 +144,8 @@ public class Moving : MonoBehaviour
 		}
 
 		GroundCheck();
+
+		ForwardCheck();
 	}
 
 	// 충돌 체크.
@@ -150,6 +162,12 @@ public class Moving : MonoBehaviour
 
 	void onTouch( string type, int id, float x, float y, float dx, float dy)
 	{
+		if (m_ePlayerState == ePlayerState.Dead) 
+		{
+			Debug.Log (m_ePlayerState.ToString());
+			return;
+		}
+
 		switch( type )
 		{
 		case"begin": 
@@ -189,6 +207,19 @@ public class Moving : MonoBehaviour
 			//Debug.Log( "move:" + x + "," + y +", d:" + dx +","+dy ); 
 			break;
 		}
+	}
+
+	/* public function */
+	public void ResetGame()
+	{
+		transform.localPosition = m_vecOriginPos;
+		m_ePlayerState = ePlayerState.Run;
+		m_nCurrentPos = 0;
+	}
+
+	public bool IsDead()
+	{
+		return m_ePlayerState == ePlayerState.Dead;
 	}
 
 	void SetState(ePlayerState state)
@@ -244,26 +275,23 @@ public class Moving : MonoBehaviour
 
 	private void ForwardCheck()
 	{
-		if (m_Capsule == null) 
+		if (m_Capsule == null)
 		{
 			Debug.LogError ("Not Found Capsule");
 			m_Capsule = this.GetComponent<CapsuleCollider> ();
 			return;
 		}
 
-		Ray ray = new Ray (transform.position, Vector3.forward);
+		Vector3 rayPos = new Vector3(transform.position.x, transform.position.y-0.3f, transform.position.z);
+
+		Ray ray = new Ray (rayPos, Vector3.forward);
 		RaycastHit hitInfo;
-		if (Physics.Raycast (ray, out hitInfo, 5f))		// layermask 정하기.
+		if (Physics.Raycast (ray, out hitInfo, 2f))		// layermask 정하기.
 		{
 			// 한 프레임 당 이동거리 = 초기 위치 + velocity * deltaTime 보다 작으면
-			Debug.Log(string.Format("forward object:{0} distance:{1}",hitInfo.collider.name,hitInfo.distance));
-			// Debug.DrawRay
+			//Debug.Log(string.Format("forward object:{0} distance:{1}",hitInfo.collider.name,hitInfo.distance));
+			SetState(ePlayerState.Dead);
 		}
-	}
-
-	private void OverPositionCheck()
-	{
-		// 좌,우 정방향 상태로.
-		// 아래 일정 값 지나면 죽음 상태로.
+		//Debug.DrawRay (rayPos, Vector3.forward, Color.red, 5f);
 	}
 }
