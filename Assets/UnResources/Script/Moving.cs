@@ -29,14 +29,13 @@ public class Moving : MonoBehaviour
 	public float m_fTouchInputGap = 5f;	// 입력 시 점프,좌우 입력 감도.
 	public float m_fJumpPower = 1000f;	// 점프 force.
 	public float m_fSideVariant = 5f;	// 좌우 이동 값.
-	public float groundCheckDistance = 1f;	// 땅에 서 있는지 체크.
 	public float m_fDashTime = 0.1f;		// dash 지속 시간.
 	public int m_fDashMultiVelocity = 30;	// dash할때 속도 배율.(올릴 수록 dash 속도와 거리 증가)
 	public float m_fSideMoveGap = 5f;
+	public GroundCheck m_groundCheck;
 
 	private float m_fMaxRightPos = 0f;
 	private float m_fMaxLeftPos = 0f;
-	private bool m_IsJumped = false;
 	private float m_fDashTimer = 0f;
 
 	private int m_nCurrentPos = 0;
@@ -143,9 +142,14 @@ public class Moving : MonoBehaviour
 			}
 		}
 
-		GroundCheck();
-
 		ForwardCheck();
+
+		// Ground Check.
+		if (m_ePlayerState == ePlayerState.Jump || m_ePlayerState == ePlayerState.TwoJump) {
+			if (m_groundCheck.isTrigging) {
+				SetState (ePlayerState.Run);
+			}
+		}
 	}
 
 	// 충돌 체크.
@@ -177,15 +181,7 @@ public class Moving : MonoBehaviour
 			//Debug.Log ("end:" + x + "," + y + ", d:" + dx + "," + dy);
 			if (Mathf.Abs (dx) <= m_fTouchInputGap) 
 			{
-				// jump
-				if (m_ePlayerState == ePlayerState.Run) {
-					SetState (ePlayerState.Jump);
-					OnJump ();
-				} 
-				else if (m_ePlayerState == ePlayerState.Jump) {
-					SetState (ePlayerState.TwoJump);
-					OnJump ();
-				}
+				OnJump ();
 				// 점프할 때 좌우이동 멈춤.
 				//m_eDirection = eDirection.None;
 			}
@@ -235,40 +231,19 @@ public class Moving : MonoBehaviour
 	{
 		if (m_rigidbody != null) 
 		{
-			m_IsJumped = true;
-			m_rigidbody.velocity = new Vector3 (0f, 0f, m_rigidbody.velocity.z);
-			m_rigidbody.AddForce (Vector3.up * m_fJumpPower);
-		}
-	}
-
-	private void GroundCheck()
-	{
-		if (m_Capsule == null) 
-		{
-			Debug.LogError ("Not Found Capsule");
-			m_Capsule = this.GetComponent<CapsuleCollider> ();
-			return;
-		}
-
-		Ray ray = new Ray (transform.position, Vector3.down);
-		RaycastHit hitInfo;
-		if (Physics.Raycast (ray, out hitInfo, 5f)) 
-		{
-			if (hitInfo.distance <= groundCheckDistance) 
+			if (m_ePlayerState == ePlayerState.Run) 
 			{
-				if (m_IsJumped) 
-				{
-					if (hitInfo.distance >= groundCheckDistance)
-					{
-						m_IsJumped = false;
-					}
-					//Debug.Log ("jump distance: " + hitInfo.distance.ToString ());
-				}
-				else
-				{
-					//Debug.Log ("ground distance: " + hitInfo.distance.ToString ());
-					SetState (ePlayerState.Run);
-				}
+				SetState (ePlayerState.Jump);
+
+				m_rigidbody.velocity = new Vector3 (0f, 0f, m_rigidbody.velocity.z);
+				m_rigidbody.AddForce (Vector3.up * m_fJumpPower);
+			} 
+			else if (m_ePlayerState == ePlayerState.Jump) 
+			{
+				SetState (ePlayerState.TwoJump);
+
+				m_rigidbody.velocity = new Vector3 (0f, 0f, m_rigidbody.velocity.z);
+				m_rigidbody.AddForce (Vector3.up * m_fJumpPower);
 			}
 		}
 	}
