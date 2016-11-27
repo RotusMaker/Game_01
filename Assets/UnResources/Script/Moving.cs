@@ -32,6 +32,7 @@ public class Moving : MonoBehaviour
 	public float m_fDashTime = 0.1f;		// dash 지속 시간.
 	public int m_fDashMultiVelocity = 30;	// dash할때 속도 배율.(올릴 수록 dash 속도와 거리 증가)
 	public float m_fSideMoveGap = 5f;
+	public float m_fFowardRayCheck = 2f;	// 정면 추돌 거리.
 	public GroundCheck m_groundCheck;
 
 	private float m_fMaxRightPos = 0f;
@@ -263,7 +264,7 @@ public class Moving : MonoBehaviour
 
 		Ray ray = new Ray (rayPos, Vector3.forward);
 		RaycastHit hitInfo;
-		if (Physics.Raycast (ray, out hitInfo, 2f))		// layermask 정하기.
+		if (Physics.Raycast (ray, out hitInfo, m_fFowardRayCheck))		// layermask 정하기.
 		{
 			// 한 프레임 당 이동거리 = 초기 위치 + velocity * deltaTime 보다 작으면
 			//Debug.Log(string.Format("forward object:{0} distance:{1}",hitInfo.collider.name,hitInfo.distance));
