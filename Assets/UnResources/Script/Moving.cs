@@ -234,6 +234,8 @@ public class Moving : MonoBehaviour
 			if (m_ePlayerState == ePlayerState.Run) 
 			{
 				SetState (ePlayerState.Jump);
+				// ground check를 바로 다시하면 상태가 잘못 정해짐.
+				m_groundCheck.isTrigging = false;
 
 				m_rigidbody.velocity = new Vector3 (0f, 0f, m_rigidbody.velocity.z);
 				m_rigidbody.AddForce (Vector3.up * m_fJumpPower);
