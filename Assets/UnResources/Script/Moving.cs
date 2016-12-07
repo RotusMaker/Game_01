@@ -157,7 +157,7 @@ public class Moving : MonoBehaviour
 		}
 
 		// Dead Check.
-		if (m_deadCheck.isTrigging) 
+		if (m_deadCheck.isTrigging || transform.localPosition.y <= -100f) 
 		{
 			SetState (ePlayerState.Dead);
 		}
@@ -232,9 +232,11 @@ public class Moving : MonoBehaviour
 	public void ResetGame()
 	{
 		transform.localPosition = m_vecOriginPos;
+		m_eDirection = eDirection.None;
 		m_ePlayerState = ePlayerState.Run;
 		m_nCurrentPos = 0;
 		m_deadCheck.isTrigging = false;
+		m_rigidbody.velocity = Vector3.zero;
 	}
 
 	public bool IsDead()
