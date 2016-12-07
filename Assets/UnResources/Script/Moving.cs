@@ -34,6 +34,7 @@ public class Moving : MonoBehaviour
 	public float m_fSideMoveGap = 5f;
 	public float m_fFowardRayCheck = 2f;	// 정면 추돌 거리.
 	public GroundCheck m_groundCheck;
+	public DeadCheck m_deadCheck;
 
 #if UNITY_EDITOR
 	// Debug UI.
@@ -155,8 +156,14 @@ public class Moving : MonoBehaviour
 			}
 		}
 
+		// Dead Check.
+		if (m_deadCheck.isTrigging) 
+		{
+			SetState (ePlayerState.Dead);
+		}
+
 		// 충돌 체크.
-		ForwardCheck();
+		//ForwardCheck();
 
 #if UNITY_EDITOR
 		// Debug Msg.
@@ -227,6 +234,7 @@ public class Moving : MonoBehaviour
 		transform.localPosition = m_vecOriginPos;
 		m_ePlayerState = ePlayerState.Run;
 		m_nCurrentPos = 0;
+		m_deadCheck.isTrigging = false;
 	}
 
 	public bool IsDead()
