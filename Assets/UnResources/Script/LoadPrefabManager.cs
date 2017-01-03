@@ -3,26 +3,36 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class LoadPrefabManager : MonoSingleton<LoadPrefabManager>
-{
-	public float m_fCurrentProgress = 0f;
-	private Dictionary<string,GameObject> m_dicPrefabs = new Dictionary<string, GameObject> ();
+{	
+	// 현재 한번에 한개씩 로드해야함. 추후 컨테이너로 변경하자.
+	[HideInInspector] public float m_fCurrentProgress = 0f;
+	[HideInInspector] public bool m_bLoaded = false;
+	private Dictionary<string, GameObject> m_dicStage = new Dictionary<string, GameObject> ();
 
-	void Start()
+	public GameObject GetStage(string stageName)
 	{
-		m_dicPrefabs.Clear();
+		if (m_dicStage.ContainsKey (stageName)) {
+			return m_dicStage [stageName];
+		}
+		return null;
 	}
 
-	public void LoadPrefab(string sectionName, int stageNumber)
+	public void LoadStage(string stageName, Transform parent)
 	{
-		string prefabName = string.Format ("{0}_{1}",sectionName,stageNumber);
-		StartCoroutine (LoadingPrefab (prefabName));
+		m_bLoaded = false;
+		string prefabName = string.Format ("Prefab/Stage/{0}",stageName);
+		StartCoroutine (LoadingStage (prefabName, parent));
 	}
 
-	IEnumerator LoadingPrefab(string prefabName)
+	IEnumerator LoadingStage(string prefabName, Transform parent)
 	{
-		string prefabPath = string.Format ("Prefab/Pattern/{0}",prefabName);
+		if (m_dicStage.ContainsKey (prefabName)) {
+			yield break;
+		}
 
-		ResourceRequest req = Resources.LoadAsync<GameObject> (prefabPath);
+		m_bLoaded = false;
+
+		ResourceRequest req = Resources.LoadAsync<GameObject> (prefabName);
 		while (!req.isDone) 
 		{
 			m_fCurrentProgress = req.progress * 100f;
@@ -30,6 +40,48 @@ public class LoadPrefabManager : MonoSingleton<LoadPrefabManager>
 		}
 
 		GameObject prefabObj = req.asset as GameObject;
-		m_dicPrefabs.Add (prefabName, prefabObj);
+		if (prefabObj != null)
+		{
+			GameObject copyPrefab = GameObject.Instantiate (prefabObj);
+			copyPrefab.transform.parent = parent;
+			copyPrefab.transform.localScale = Vector3.one;
+			copyPrefab.transform.localPosition = Vector3.zero;
+
+			string[] splitKey = prefabName.Split ('/');
+			m_dicStage.Add (splitKey[splitKey.Length-1], copyPrefab);
+			Debug.Log ("Add Stage: " + splitKey[splitKey.Length-1]);
+		}
+
+		m_bLoaded = true;
+	}
+
+	public void LoadMap(string mapName, Transform parent)
+	{
+		m_bLoaded = false;
+		string prefabName = string.Format ("Prefab/Background/{0}",mapName);
+		StartCoroutine (LoadingMap (prefabName, parent));
+	}
+
+	IEnumerator LoadingMap(string prefabName, Transform parent)
+	{
+		m_bLoaded = false;
+
+		ResourceRequest req = Resources.LoadAsync<GameObject> (prefabName);
+		while (!req.isDone) 
+		{
+			m_fCurrentProgress = req.progress * 100f;
+			yield return null;
+		}
+
+		GameObject prefabObj = req.asset as GameObject;
+		if (prefabObj != null)
+		{
+			GameObject copyPrefab = GameObject.Instantiate (prefabObj);
+			copyPrefab.transform.parent = parent;
+			copyPrefab.transform.localScale = Vector3.one;
+			copyPrefab.transform.localPosition = Vector3.zero;
+		}
+
+		m_bLoaded = true;
 	}
 }

@@ -15,13 +15,14 @@ public class Moving : MonoBehaviour
 
 	public enum ePlayerState
 	{
-		Run = 0,
+		None,
+		Run,
 		Jump,
 		TwoJump,
 		Dash,
 		Dead,	// y <= -10f, forward ray cast distance <= 1f, death zone
 	}
-	private ePlayerState m_ePlayerState = ePlayerState.Run;
+	private ePlayerState m_ePlayerState = ePlayerState.None;
 
 	private Rigidbody m_rigidbody;
 	private CapsuleCollider m_Capsule;
@@ -55,12 +56,8 @@ public class Moving : MonoBehaviour
 		InputListener.GetInstance.end0 += onTouch;
 		InputListener.GetInstance.move0 += onTouch;
 
-		m_vecOriginPos = transform.localPosition;
-
-		m_fMaxRightPos = m_vecOriginPos.x + m_fSideMoveGap;
-		m_fMaxLeftPos = m_vecOriginPos.x - m_fSideMoveGap;
-
-		m_nCurrentPos = 0;
+		SetOrigPos (transform.localPosition);
+		SetState(ePlayerState.None);
 	}
 
 	void OnEnable()
@@ -77,7 +74,7 @@ public class Moving : MonoBehaviour
 
 	void Update()
 	{
-		if (m_ePlayerState == ePlayerState.Dead) 
+		if (m_ePlayerState == ePlayerState.Dead || m_ePlayerState == ePlayerState.None) 
 		{
 			return;
 		}
@@ -131,7 +128,7 @@ public class Moving : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		if (m_ePlayerState == ePlayerState.Dead) 
+		if (m_ePlayerState == ePlayerState.Dead || m_ePlayerState == ePlayerState.None) 
 		{
 			return;
 		}
@@ -189,7 +186,7 @@ public class Moving : MonoBehaviour
 
 	void onTouch( string type, int id, float x, float y, float dx, float dy)
 	{
-		if (m_ePlayerState == ePlayerState.Dead) 
+		if (m_ePlayerState == ePlayerState.Dead || m_ePlayerState == ePlayerState.None) 
 		{
 			Debug.Log (m_ePlayerState.ToString());
 			return;
@@ -229,11 +226,22 @@ public class Moving : MonoBehaviour
 	}
 
 	/* public function */
+	// 캐릭터 최초 시작 지점(리스폰 지역) 설정.
+	public void SetOrigPos(Vector3 position)
+	{
+		m_vecOriginPos = position;
+
+		m_fMaxRightPos = m_vecOriginPos.x + m_fSideMoveGap;
+		m_fMaxLeftPos = m_vecOriginPos.x - m_fSideMoveGap;
+
+		m_nCurrentPos = 0;
+	}
+
 	public void ResetGame()
 	{
+		SetState(ePlayerState.None);
 		transform.localPosition = m_vecOriginPos;
 		m_eDirection = eDirection.None;
-		m_ePlayerState = ePlayerState.Run;
 		m_nCurrentPos = 0;
 		m_deadCheck.isTrigging = false;
 		m_rigidbody.velocity = Vector3.zero;
@@ -244,12 +252,22 @@ public class Moving : MonoBehaviour
 		return m_ePlayerState == ePlayerState.Dead;
 	}
 
-	void SetState(ePlayerState state)
+	public void SetState(ePlayerState state)
 	{
-		if (m_ePlayerState != state) 
+		if (state == ePlayerState.None) {
+			m_ePlayerState = ePlayerState.None;
+			m_rigidbody.useGravity = false;
+			m_rigidbody.isKinematic = true;
+		} 
+		else 
 		{
-			m_ePlayerState = state;
-			Debug.Log ("### State: " + m_ePlayerState.ToString ());
+			if (m_ePlayerState != state) 
+			{
+				m_ePlayerState = state;
+				Debug.Log ("### State: " + m_ePlayerState.ToString ());
+				m_rigidbody.useGravity = true;
+				m_rigidbody.isKinematic = false;
+			}
 		}
 	}
 

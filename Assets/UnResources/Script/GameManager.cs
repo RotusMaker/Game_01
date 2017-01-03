@@ -4,13 +4,15 @@ using System.Collections;
 public class GameManager : MonoSingleton<GameManager>
 {
 	public GameObject m_player;
+	public GameObject m_root;
 	private Moving m_movePlayer;
 	
 	public enum eGameState
 	{
 		None,
-		Loading,
-		Ready,
+		Loading_Background,	// 배경을 로드 한다.
+		Loading_Stage,		// 스테이지를 로드 한다.
+		Ready,				// 게임 시작 준비를 한다.
 		Start,
 		Play,
 		Result
@@ -20,6 +22,7 @@ public class GameManager : MonoSingleton<GameManager>
 	{
 		return m_gameState;
 	}
+
 	public void SetState(eGameState state)
 	{
 		if (m_gameState != state) 
@@ -30,11 +33,12 @@ public class GameManager : MonoSingleton<GameManager>
 		}
 	}
 
-	void Start () 
+	void Start ()
 	{
 		m_movePlayer = m_player.GetComponent<Moving> ();
+		m_movePlayer.ResetGame ();
 
-		SetState (eGameState.Play);
+		SetState (eGameState.Loading_Background);
 	}
 	
 	void Update () 
@@ -46,8 +50,38 @@ public class GameManager : MonoSingleton<GameManager>
 	{
 		switch(m_gameState)
 		{
+		case eGameState.Loading_Background:
+			{
+				Debug.Log ("Background Load.");
+				LoadPrefabManager.GetInstance.LoadMap ("Map_03", m_root.transform);
+			}
+			break;
+		case eGameState.Loading_Stage:
+			{
+				Debug.Log ("Stage Load.");
+				LoadPrefabManager.GetInstance.LoadStage ("Round_R_00", m_root.transform);
+			}
+			break;
+		case eGameState.Ready:
+			{
+				Debug.Log ("Character Ready.");
+				GameObject stageObj = LoadPrefabManager.GetInstance.GetStage ("Round_R_00");
+				Transform startPos = stageObj.transform.FindChild ("StartPosition");
+				if (startPos != null) {
+					m_movePlayer.SetOrigPos (startPos.localPosition);
+				}
+				m_movePlayer.ResetGame ();
+			}
+			break;
+		case eGameState.Play:
+			{
+				m_movePlayer.SetState (Moving.ePlayerState.Run);
+			}
+			break;
 		case eGameState.Result:
-			StartCoroutine (Result ());
+			{
+				StartCoroutine (Result ());
+			}
 			break;
 		}
 	}
@@ -56,25 +90,61 @@ public class GameManager : MonoSingleton<GameManager>
 	{
 		switch (m_gameState) {
 		case eGameState.Play:
-			if (m_movePlayer != null) {
-				if (m_movePlayer.IsDead ()) {
+			if (m_movePlayer != null)
+			{
+				if (m_movePlayer.IsDead ())
+				{
 					SetState (eGameState.Result);
 				}
 			}
 			break;
-		case eGameState.Result:
+		case eGameState.Loading_Background:
+			{
+				Debug.Log (string.Format("{0}% Loading...",LoadPrefabManager.GetInstance.m_fCurrentProgress));
+				if (LoadPrefabManager.GetInstance.m_bLoaded == true) 
+				{
+					SetState (eGameState.Loading_Stage);
+				}
+			}
+			break;
+		case eGameState.Loading_Stage:
+			{
+				Debug.Log (string.Format("{0}% Loading...",LoadPrefabManager.GetInstance.m_fCurrentProgress));
+				if (LoadPrefabManager.GetInstance.m_bLoaded == true) 
+				{
+					SetState (eGameState.Ready);
+				}
+			}
+			break;
+		case eGameState.Ready:
+			{
+				SetState (eGameState.Play);
+			}
 			break;
 		}
 	}
 
 	private void EndState(eGameState state)
 	{
+		switch (state) 
+		{
+		case eGameState.Loading_Background:
+			{
+				Debug.Log ("End Background Loading.");
+			}
+			break;
+		case eGameState.Loading_Stage:
+			{
+				Debug.Log ("End Stage Loading.");
+			}
+			break;
+		}
 	}
 
 	private void ResetGame()
 	{
-		SetState (eGameState.Play);
 		m_movePlayer.ResetGame();
+		SetState (eGameState.Play);
 	}
 
 	private void LoadGame(string sectionName, int stageNumber)
