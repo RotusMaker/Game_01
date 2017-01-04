@@ -3,10 +3,17 @@ using System.Collections;
 
 public class GameManager : MonoSingleton<GameManager>
 {
+	public class GameLoadInfo
+	{
+		public string mapName;
+		public string stageName;
+	}
+	
 	public GameObject m_player;
 	public GameObject m_root;
+	[HideInInspector] public GameLoadInfo m_gameLoadInfo = null;
 	private Moving m_movePlayer;
-	
+
 	public enum eGameState
 	{
 		None,
@@ -38,7 +45,7 @@ public class GameManager : MonoSingleton<GameManager>
 		m_movePlayer = m_player.GetComponent<Moving> ();
 		m_movePlayer.ResetGame ();
 
-		SetState (eGameState.Loading_Background);
+		SetState (eGameState.None);
 	}
 	
 	void Update () 
@@ -53,19 +60,23 @@ public class GameManager : MonoSingleton<GameManager>
 		case eGameState.Loading_Background:
 			{
 				Debug.Log ("Background Load.");
-				LoadPrefabManager.GetInstance.LoadMap ("Map_03", m_root.transform);
+				if (m_gameLoadInfo != null) {
+					LoadPrefabManager.GetInstance.LoadMap (m_gameLoadInfo.mapName, m_root.transform);
+				}
 			}
 			break;
 		case eGameState.Loading_Stage:
 			{
 				Debug.Log ("Stage Load.");
-				LoadPrefabManager.GetInstance.LoadStage ("Round_R_00", m_root.transform);
+				if (m_gameLoadInfo != null) {
+					LoadPrefabManager.GetInstance.LoadStage (m_gameLoadInfo.stageName, m_root.transform);
+				}
 			}
 			break;
 		case eGameState.Ready:
 			{
 				Debug.Log ("Character Ready.");
-				GameObject stageObj = LoadPrefabManager.GetInstance.GetStage ("Round_R_00");
+				GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageName);
 				Transform startPos = stageObj.transform.FindChild ("StartPosition");
 				if (startPos != null) {
 					m_movePlayer.SetOrigPos (startPos.localPosition);
