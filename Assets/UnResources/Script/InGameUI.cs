@@ -38,6 +38,7 @@ public class InGameUI : MonoBehaviour
 	{
 		if (m_dicInputField.ContainsKey ("bg") && m_dicInputField.ContainsKey ("stage")) 
 		{
+			LoadPrefabManager.GetInstance.ResetBackground ();
 			LoadPrefabManager.GetInstance.ResetStage ();
 
 			string bgName = m_dicInputField ["bg"].text;
