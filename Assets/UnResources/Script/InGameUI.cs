@@ -36,7 +36,10 @@ public class InGameUI : MonoBehaviour
 
 	public void OnClickedStart()
 	{
-		if (m_dicInputField.ContainsKey ("bg") && m_dicInputField.ContainsKey ("stage")) {
+		if (m_dicInputField.ContainsKey ("bg") && m_dicInputField.ContainsKey ("stage")) 
+		{
+			LoadPrefabManager.GetInstance.ResetStage ();
+
 			string bgName = m_dicInputField ["bg"].text;
 			string stageName = m_dicInputField ["stage"].text;
 			GameManager.GetInstance.m_gameLoadInfo = new GameManager.GameLoadInfo ();
