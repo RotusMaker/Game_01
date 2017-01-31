@@ -119,11 +119,6 @@ public class Moving : MonoBehaviour
 		default:
 			break;
 		}
-
-		if (Input.GetKeyDown (KeyCode.Space))
-		{
-			SetState(ePlayerState.Dash);
-		}
 	}
 
 	void FixedUpdate()
@@ -221,6 +216,9 @@ public class Moving : MonoBehaviour
 			break;
 		case"move": 
 			//Debug.Log( "move:" + x + "," + y +", d:" + dx +","+dy ); 
+			break;
+		case"dash":
+			SetState(ePlayerState.Dash);
 			break;
 		}
 	}

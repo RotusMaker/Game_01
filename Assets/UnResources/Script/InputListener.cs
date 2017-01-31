@@ -8,6 +8,8 @@ public class InputListener : MonoSingleton<InputListener> {
 	public event listener move0, move1, move2, move3, move4;
 	public event listener end0, end1, end2, end3, end4;
 
+	public bool isKeyboard = true;
+
 	Vector2[] delta = new Vector2[5];
 
 	void Start()
@@ -16,6 +18,32 @@ public class InputListener : MonoSingleton<InputListener> {
 	}
 
 	void Update()
+	{
+		if (isKeyboard) {
+			KeyboardInputUpdate ();
+		} 
+		else {
+			MouseInputUpdate ();
+		}
+	}
+
+	void KeyboardInputUpdate()
+	{
+		if (Input.GetKeyDown (KeyCode.A) == true) {
+			if( end0 != null ) end0( "end", 0, 0, 0, -100, 0 );
+		}
+		else if (Input.GetKeyDown (KeyCode.D) == true){
+			if( end0 != null ) end0( "end", 0, 0, 0, 100, 0 );
+		}
+		else if (Input.GetKeyDown (KeyCode.Space) == true){
+			if( end0 != null ) end0( "end", 0, 0, 0, 0, 0 );
+		}
+		else if (Input.GetKeyDown (KeyCode.LeftShift) == true){
+			if( end0 != null ) end0( "dash", 0, 0, 0, 0, 0 );
+		}
+	}
+
+	void MouseInputUpdate()
 	{
 #if UNITY_EDITOR
 		int count = (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0) || Input.GetMouseButtonUp(0))?1:0;
