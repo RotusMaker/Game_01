@@ -14,10 +14,10 @@ public class MoveTriggerEvent : ObjectTriggerEvent
 	public float m_fValue = 5f;
 	public float m_fSpeed = 10f;
 	public float m_fDelay = 0.5f;
-	
+	/*
 	public override void EnterGo()
 	{
-		base.EnterGo ();
+		//base.EnterGo ();
 
 		switch (m_eEventMove) {
 		case eTriggerEventMove.Up:
@@ -31,9 +31,9 @@ public class MoveTriggerEvent : ObjectTriggerEvent
 
 	public override void ExitGo()
 	{
-		base.ExitGo ();
+		//base.ExitGo ();
 	}
-
+	*/
 	IEnumerator Move()
 	{
 		yield return new WaitForSeconds (m_fDelay);

@@ -5,8 +5,8 @@ public class GameManager : MonoSingleton<GameManager>
 {
 	public class GameLoadInfo
 	{
-		public string mapName;
-		public string stageName;
+		public int mapID;
+		public int stageID;
 	}
 	
 	public GameObject m_player;
@@ -61,7 +61,7 @@ public class GameManager : MonoSingleton<GameManager>
 			{
 				Debug.Log ("Background Load.");
 				if (m_gameLoadInfo != null) {
-					LoadPrefabManager.GetInstance.LoadMap (m_gameLoadInfo.mapName, m_root.transform);
+					LoadPrefabManager.GetInstance.LoadMap (m_gameLoadInfo.mapID, m_root.transform);
 				}
 			}
 			break;
@@ -69,14 +69,14 @@ public class GameManager : MonoSingleton<GameManager>
 			{
 				Debug.Log ("Stage Load.");
 				if (m_gameLoadInfo != null) {
-					LoadPrefabManager.GetInstance.LoadStage (m_gameLoadInfo.stageName, m_root.transform);
+					LoadPrefabManager.GetInstance.LoadStage (m_gameLoadInfo.stageID, m_root.transform);
 				}
 			}
 			break;
 		case eGameState.Ready:
 			{
 				Debug.Log ("Character Ready.");
-				GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageName);
+				GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageID);
 				Transform startPos = stageObj.transform.FindChild ("StartPosition");
 				if (startPos != null) {
 					m_movePlayer.SetOrigPos (startPos.localPosition);

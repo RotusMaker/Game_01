@@ -5,12 +5,12 @@ using System.Collections.Generic;
 public enum eTriggerType
 {
 	Disable = 0,
+	Disappeare,		// 오래밟으면 사라지는 발판.
 	Swamp,
-	Go,
 	Cam_Rotation,
 };
 
-[RequireComponent (typeof (BoxCollider))]
+//[RequireComponent (typeof (BoxCollider))]
 public class TriggerBox : MonoBehaviour 
 {
 	[System.Serializable]
@@ -25,7 +25,18 @@ public class TriggerBox : MonoBehaviour
 	void Start()
 	{
 		m_boxCollider = this.GetComponent<BoxCollider>();
-		m_boxCollider.isTrigger = true;
+		if (m_boxCollider == null) {	//자기자신에게 없으면 첫번째 자식 서치.
+			if (this.transform.childCount > 0) {
+				m_boxCollider = this.transform.GetChild(0).GetComponent<BoxCollider>();
+			} 
+		}
+
+		if (m_boxCollider == null) {
+			Debug.LogError ("[Error] 1001");
+		} 
+		else {
+			m_boxCollider.isTrigger = true;
+		}
 	}
 
 	void OnTriggerEnter(Collider other)
@@ -64,8 +75,8 @@ public class TriggerBox : MonoBehaviour
 	{
 		switch(type)
 		{
-		case eTriggerType.Go:
-			return "EnterGo";
+		case eTriggerType.Disappeare:
+			return "EnterDisappeare";
 		case eTriggerType.Swamp:
 			return "EnterSwamp";
 		default: 
@@ -77,8 +88,8 @@ public class TriggerBox : MonoBehaviour
 	{
 		switch(type)
 		{
-		case eTriggerType.Go:
-			return "ExitGo";
+		case eTriggerType.Disappeare:
+			return "ExitDisappeare";
 		case eTriggerType.Swamp:
 			return "ExitSwamp";
 		default: 

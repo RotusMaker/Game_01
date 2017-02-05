@@ -41,11 +41,11 @@ public class InGameUI : MonoBehaviour
 			LoadPrefabManager.GetInstance.ResetBackground ();
 			LoadPrefabManager.GetInstance.ResetStage ();
 
-			string bgName = m_dicInputField ["bg"].text;
-			string stageName = m_dicInputField ["stage"].text;
+			string bgID = m_dicInputField ["bg"].text;
+			string stageID = m_dicInputField ["stage"].text;
 			GameManager.GetInstance.m_gameLoadInfo = new GameManager.GameLoadInfo ();
-			GameManager.GetInstance.m_gameLoadInfo.mapName = bgName;
-			GameManager.GetInstance.m_gameLoadInfo.stageName = stageName;
+			GameManager.GetInstance.m_gameLoadInfo.mapID = System.Convert.ToInt32(bgID);
+			GameManager.GetInstance.m_gameLoadInfo.stageID = System.Convert.ToInt32(stageID);
 			GameManager.GetInstance.SetState (GameManager.eGameState.Loading_Background);
 		}
 	}
