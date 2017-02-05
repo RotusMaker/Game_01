@@ -11,6 +11,7 @@ public class GameManager : MonoSingleton<GameManager>
 	
 	public GameObject m_player;
 	public GameObject m_root;
+	public InGameUI m_ui;
 	[HideInInspector] public GameLoadInfo m_gameLoadInfo = null;
 	private Moving m_movePlayer;
 
@@ -59,7 +60,8 @@ public class GameManager : MonoSingleton<GameManager>
 		{
 		case eGameState.Loading_Background:
 			{
-				Debug.Log ("Background Load.");
+				//Debug.Log ("Background Load.");
+				m_ui.OnLoading(true, "Background Loading...");
 				if (m_gameLoadInfo != null) {
 					LoadPrefabManager.GetInstance.LoadMap (m_gameLoadInfo.mapID, m_root.transform);
 				}
@@ -67,7 +69,7 @@ public class GameManager : MonoSingleton<GameManager>
 			break;
 		case eGameState.Loading_Stage:
 			{
-				Debug.Log ("Stage Load.");
+				m_ui.OnLoading(true, "Stage Loading...");
 				if (m_gameLoadInfo != null) {
 					LoadPrefabManager.GetInstance.LoadStage (m_gameLoadInfo.stageID, m_root.transform);
 				}
@@ -75,7 +77,7 @@ public class GameManager : MonoSingleton<GameManager>
 			break;
 		case eGameState.Ready:
 			{
-				Debug.Log ("Character Ready.");
+				m_ui.OnLoading(true, "Character Loading...");
 				GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageID);
 				Transform startPos = stageObj.transform.FindChild ("StartPosition");
 				if (startPos != null) {
@@ -86,11 +88,13 @@ public class GameManager : MonoSingleton<GameManager>
 			break;
 		case eGameState.Play:
 			{
+				m_ui.OnLoading(false, "Go");
 				m_movePlayer.SetState (Moving.ePlayerState.Run);
 			}
 			break;
 		case eGameState.Result:
 			{
+				m_ui.OnLoading(true, "Game Reset Loading...");
 				StartCoroutine (Result ());
 			}
 			break;
@@ -111,7 +115,8 @@ public class GameManager : MonoSingleton<GameManager>
 			break;
 		case eGameState.Loading_Background:
 			{
-				Debug.Log (string.Format("{0}% Loading...",LoadPrefabManager.GetInstance.m_fCurrentProgress));
+				//Debug.Log (string.Format("{0}% Loading...",LoadPrefabManager.GetInstance.m_fCurrentProgress));
+				m_ui.OnLoading(true, string.Format("Background Loading...{0}%",LoadPrefabManager.GetInstance.m_fCurrentProgress));
 				if (LoadPrefabManager.GetInstance.m_bLoaded == true) 
 				{
 					SetState (eGameState.Loading_Stage);
@@ -120,7 +125,8 @@ public class GameManager : MonoSingleton<GameManager>
 			break;
 		case eGameState.Loading_Stage:
 			{
-				Debug.Log (string.Format("{0}% Loading...",LoadPrefabManager.GetInstance.m_fCurrentProgress));
+				//Debug.Log (string.Format("{0}% Loading...",LoadPrefabManager.GetInstance.m_fCurrentProgress));
+				m_ui.OnLoading(true, string.Format("Stage Loading...{0}%",LoadPrefabManager.GetInstance.m_fCurrentProgress));
 				if (LoadPrefabManager.GetInstance.m_bLoaded == true) 
 				{
 					SetState (eGameState.Ready);
@@ -152,11 +158,12 @@ public class GameManager : MonoSingleton<GameManager>
 		}
 	}
 
-	private void ResetGame()
+	IEnumerator ResetGame()
 	{
 		m_movePlayer.ResetGame();
+		yield return null;
 		GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageID);
-		SearchTrigger (stageObj);
+		yield return StartCoroutine(SearchTrigger (stageObj));
 		SetState (eGameState.Play);
 	}
 
@@ -165,7 +172,7 @@ public class GameManager : MonoSingleton<GameManager>
 	}
 
 	// 연산이 좀 많음.
-	private void SearchTrigger(GameObject root)
+	IEnumerator SearchTrigger(GameObject root)
 	{
 		for (int i = 0; i < root.transform.childCount; i++) {
 			Transform child = root.transform.GetChild (i);
@@ -176,6 +183,7 @@ public class GameManager : MonoSingleton<GameManager>
 			if (child.childCount > 0) {
 				SearchTrigger (child.gameObject);
 			}
+			yield return null;
 		}
 	}
 
@@ -196,6 +204,6 @@ public class GameManager : MonoSingleton<GameManager>
 		Debug.Log ("Result 연출.");
 		yield return new WaitForSeconds(1.5f);
 		Debug.Log ("Result 연출 끝");
-		ResetGame ();
+		StartCoroutine(ResetGame ());
 	}
 }
