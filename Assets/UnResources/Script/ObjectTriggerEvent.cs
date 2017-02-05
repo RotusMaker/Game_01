@@ -46,9 +46,8 @@ public class ObjectTriggerEvent : MonoBehaviour {
 	{
 		type = eTriggerType.Bird;
 
-		Vector3 purposePos = origPos + (Vector3.back * 100f);
-		Vector3 jumpPos = origPos + (Vector3.up * 12f);
-		iTween.MoveTo(this.gameObject, iTween.Hash("position", jumpPos, "time", 1.5f, "islocal", true, "looptype", iTween.LoopType.pingPong));
-		iTween.MoveTo(this.gameObject, iTween.Hash("position", purposePos, "time", 5f, "delay", 0.1f, "islocal", true));
+		Vector3 purposePos = origPos + (Vector3.back * 200f);
+		//iTween.MoveTo(this.gameObject, iTween.Hash("y", origPos.y + 12f, "time", 1f, "delay", 0.1f, "islocal", true, "looptype", iTween.LoopType.pingPong));
+		iTween.MoveTo(this.gameObject, iTween.Hash("position", purposePos, "time", 10f, "delay", 0.1f, "islocal", true));
 	}
 }

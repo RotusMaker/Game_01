@@ -155,11 +155,28 @@ public class GameManager : MonoSingleton<GameManager>
 	private void ResetGame()
 	{
 		m_movePlayer.ResetGame();
+		GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageID);
+		SearchTrigger (stageObj);
 		SetState (eGameState.Play);
 	}
 
 	private void LoadGame(string sectionName, int stageNumber)
 	{
+	}
+
+	// 연산이 좀 많음.
+	private void SearchTrigger(GameObject root)
+	{
+		for (int i = 0; i < root.transform.childCount; i++) {
+			Transform child = root.transform.GetChild (i);
+			ObjectTriggerEvent trigger = child.GetComponent<ObjectTriggerEvent>();
+			if (trigger != null) {
+				trigger.Reset ();
+			}
+			if (child.childCount > 0) {
+				SearchTrigger (child.gameObject);
+			}
+		}
 	}
 
 	IEnumerator Loading()
