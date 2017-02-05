@@ -4,16 +4,34 @@ using System.Collections;
 public class ObjectTriggerEvent : MonoBehaviour {
 
 	private string m_sKey = string.Empty;
+	private eTriggerType type = eTriggerType.Disable;
+
+	private Vector3 origPos;
+
+	void Start()
+	{
+		origPos = this.transform.localPosition;
+	}
 
 	// 게임 리셋될 때 타야함.
 	public void Reset()
 	{
-		this.gameObject.SetActive (true);
+		switch(type){
+		case eTriggerType.Disappeare:
+			this.gameObject.SetActive (true);
+			break;
+		case eTriggerType.Bird:
+			iTween.Stop (this.gameObject);
+			this.transform.localPosition = origPos;
+			break;
+		}
 	}
 
 	// 스테이지 5,6 떨어지는 발판.
 	public void EnterDisappeare()
 	{
+		type = eTriggerType.Disappeare;
+
 		if (string.IsNullOrEmpty (m_sKey)) {
 			m_sKey = TriggerEventManager.GetInstance.CreateKey ();
 		}
@@ -22,7 +40,15 @@ public class ObjectTriggerEvent : MonoBehaviour {
 			this.gameObject.SetActive(false);
 		});
 	}
-	public void ExitDisappeare()
+
+	// 스테이지 8,9 다가오는 새.
+	public void EnterBird()
 	{
+		type = eTriggerType.Bird;
+
+		Vector3 purposePos = origPos + (Vector3.back * 100f);
+		Vector3 jumpPos = origPos + (Vector3.up * 12f);
+		iTween.MoveTo(this.gameObject, iTween.Hash("position", jumpPos, "time", 1.5f, "islocal", true, "looptype", iTween.LoopType.pingPong));
+		iTween.MoveTo(this.gameObject, iTween.Hash("position", purposePos, "time", 5f, "delay", 0.1f, "islocal", true));
 	}
 }

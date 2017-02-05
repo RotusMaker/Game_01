@@ -6,6 +6,7 @@ public enum eTriggerType
 {
 	Disable = 0,
 	Disappeare,		// 오래밟으면 사라지는 발판.
+	Bird,			// 위아래로 움직이며 다가오는 오브젝트.
 	Swamp,
 	Cam_Rotation,
 };
@@ -77,6 +78,8 @@ public class TriggerBox : MonoBehaviour
 		{
 		case eTriggerType.Disappeare:
 			return "EnterDisappeare";
+		case eTriggerType.Bird:
+			return "EnterBird";
 		case eTriggerType.Swamp:
 			return "EnterSwamp";
 		default: 
@@ -88,8 +91,6 @@ public class TriggerBox : MonoBehaviour
 	{
 		switch(type)
 		{
-		case eTriggerType.Disappeare:
-			return "ExitDisappeare";
 		case eTriggerType.Swamp:
 			return "ExitSwamp";
 		default: 
