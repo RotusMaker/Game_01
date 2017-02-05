@@ -22,6 +22,7 @@ public class TriggerEventManager : MonoSingleton<TriggerEventManager> {
 	}
 	public Dictionary<string, TriggerTimer> m_dicTimers = new Dictionary<string, TriggerTimer> ();
 	private int m_nKeyIndex = 0;
+	private List<string> m_listDeleteKey = new List<string> ();
 
 	public string CreateKey()
 	{
@@ -31,16 +32,18 @@ public class TriggerEventManager : MonoSingleton<TriggerEventManager> {
 
 	public void StartTimer(string key, float time, Action complet)
 	{
-		TriggerTimer timer = new TriggerTimer ();
-		timer.startTime = Time.time;
-		timer.time = time;
-		timer.complet = complet;
-
 		if (m_dicTimers.ContainsKey (key)) {
-			Debug.LogError ("[Error] 10002");
-			return;
+			m_dicTimers [key].startTime = Time.time;
+			m_dicTimers [key].time = time;
+			m_dicTimers [key].complet = complet;
+		} 
+		else {
+			TriggerTimer timer = new TriggerTimer ();
+			timer.startTime = Time.time;
+			timer.time = time;
+			timer.complet = complet;
+			m_dicTimers.Add (key, timer);
 		}
-		m_dicTimers.Add (key, timer);
 	}
 
 	// Frame 시간 영향 받지 않는 Update.
@@ -48,12 +51,16 @@ public class TriggerEventManager : MonoSingleton<TriggerEventManager> {
 	{
 		if (m_dicTimers.Count > 0) {
 			float currentTime = Time.time;
+			m_listDeleteKey.Clear ();
 			for (Dictionary<string, TriggerTimer>.Enumerator it = m_dicTimers.GetEnumerator (); it.MoveNext ();) {
 				if (it.Current.Value.IsCheckTimer (currentTime)) {
 					// 시간다됨.
 					it.Current.Value.complet();
-					m_dicTimers.Remove (it.Current.Key);
+					m_listDeleteKey.Add (it.Current.Key);
 				}
+			}
+			for (int i = 0; i < m_listDeleteKey.Count; i++) {
+				m_dicTimers.Remove (m_listDeleteKey[i]);
 			}
 		}
 	}
