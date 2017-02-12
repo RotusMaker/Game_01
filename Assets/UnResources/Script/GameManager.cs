@@ -174,6 +174,17 @@ public class GameManager : MonoSingleton<GameManager>
 	// 연산이 좀 많음.
 	IEnumerator SearchTrigger(GameObject root)
 	{
+		if (root != null) {
+			GameRound round = root.GetComponent<GameRound>();
+			if (round != null) {
+				for (int i = 0; i < round.m_listTriggerObj.Count; i++) {
+					//Debug.Log (round.m_listTriggerObj[i].name);
+					round.m_listTriggerObj[i].GetComponent<ObjectTriggerEvent>().Reset();
+					yield return null;
+				}
+			}
+		}
+		/*
 		for (int i = 0; i < root.transform.childCount; i++) {
 			Transform child = root.transform.GetChild (i);
 			ObjectTriggerEvent trigger = child.GetComponent<ObjectTriggerEvent>();
@@ -181,10 +192,10 @@ public class GameManager : MonoSingleton<GameManager>
 				trigger.Reset ();
 			}
 			if (child.childCount > 0) {
-				SearchTrigger (child.gameObject);
+				yield return StartCoroutine(SearchTrigger (child.gameObject));
 			}
-			yield return null;
 		}
+		*/
 	}
 
 	IEnumerator Loading()

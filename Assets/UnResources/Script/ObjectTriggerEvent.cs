@@ -7,6 +7,12 @@ public class ObjectTriggerEvent : MonoBehaviour {
 	private eTriggerType type = eTriggerType.Disable;
 
 	private Vector3 origPos;
+	private GameObject model;
+
+	void Awake()
+	{
+		model = this.transform.GetChild (0).gameObject;
+	}
 
 	void Start()
 	{
@@ -22,6 +28,7 @@ public class ObjectTriggerEvent : MonoBehaviour {
 			break;
 		case eTriggerType.Bird:
 			iTween.Stop (this.gameObject);
+			iTween.Stop (model);
 			this.transform.localPosition = origPos;
 			break;
 		}
@@ -45,9 +52,8 @@ public class ObjectTriggerEvent : MonoBehaviour {
 	public void EnterBird()
 	{
 		type = eTriggerType.Bird;
-
 		Vector3 purposePos = origPos + (Vector3.back * 200f);
-		//iTween.MoveTo(this.gameObject, iTween.Hash("y", origPos.y + 12f, "time", 1f, "delay", 0.1f, "islocal", true, "looptype", iTween.LoopType.pingPong));
-		iTween.MoveTo(this.gameObject, iTween.Hash("position", purposePos, "time", 10f, "delay", 0.1f, "islocal", true));
+		iTween.MoveTo(model, iTween.Hash("y", 1f, "time", 1f, "delay", 0.1f, "islocal", true, "looptype", iTween.LoopType.pingPong));
+		iTween.MoveTo(this.gameObject, iTween.Hash("position", purposePos, "time", 2f, "islocal", true));
 	}
 }
