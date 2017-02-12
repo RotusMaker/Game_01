@@ -18,6 +18,15 @@ public class ChracterTriggerEvent : MonoBehaviour
 		m_movePlayer = this.GetComponent<Moving> ();
 	}
 
+	void OnCollisionEnter(Collision collision)
+	{
+		// death zone 감지.
+		if (collision.gameObject.CompareTag ("DeathZone")) {
+			Debug.Log(collision.gameObject.name);
+			m_movePlayer.SetState (Moving.ePlayerState.Dead);
+		}
+	}
+
 	void EnterSwamp()
 	{
 		if (m_swampData.isEnter) {

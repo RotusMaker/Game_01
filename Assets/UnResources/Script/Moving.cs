@@ -166,6 +166,7 @@ public class Moving : MonoBehaviour
 #endif
 	}
 
+	/*
 	// 충돌 체크.
 	void OnCollisionEnter(Collision collision)
 	{
@@ -179,6 +180,7 @@ public class Moving : MonoBehaviour
 		// trigger 체크.
 		Debug.Log(other.gameObject.name);
 	}
+	*/
 
 	void onTouch( string type, int id, float x, float y, float dx, float dy)
 	{

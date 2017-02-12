@@ -29,7 +29,9 @@ public class GameRoundEditor : Editor {
 
 	public bool Linking()
 	{
-		myTarget.m_listTriggerObj.Clear ();
+		if (myTarget.m_listTriggerObj != null) {
+			myTarget.m_listTriggerObj.Clear ();
+		}
 		FindClassChild (myTarget.m_Root.transform);
 		return true;
 	}
