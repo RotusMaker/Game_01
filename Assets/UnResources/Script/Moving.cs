@@ -21,6 +21,7 @@ public class Moving : MonoBehaviour
 		TwoJump,
 		Dash,
 		Dead,	// y <= -10f, forward ray cast distance <= 1f, death zone
+		Goal,
 	}
 	private ePlayerState m_ePlayerState = ePlayerState.None;
 
@@ -74,7 +75,7 @@ public class Moving : MonoBehaviour
 
 	void Update()
 	{
-		if (m_ePlayerState == ePlayerState.Dead || m_ePlayerState == ePlayerState.None) 
+		if (IsStopState()) 
 		{
 			return;
 		}
@@ -123,7 +124,7 @@ public class Moving : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		if (m_ePlayerState == ePlayerState.Dead || m_ePlayerState == ePlayerState.None) 
+		if (IsStopState()) 
 		{
 			return;
 		}
@@ -184,7 +185,7 @@ public class Moving : MonoBehaviour
 
 	void onTouch( string type, int id, float x, float y, float dx, float dy)
 	{
-		if (m_ePlayerState == ePlayerState.Dead || m_ePlayerState == ePlayerState.None) 
+		if (IsStopState()) 
 		{
 			Debug.Log (m_ePlayerState.ToString());
 			return;
@@ -248,9 +249,19 @@ public class Moving : MonoBehaviour
 		m_rigidbody.velocity = Vector3.zero;
 	}
 
+	public bool IsGoal()
+	{
+		return m_ePlayerState == ePlayerState.Goal;
+	}
+
 	public bool IsDead()
 	{
 		return m_ePlayerState == ePlayerState.Dead;
+	}
+
+	public bool IsStopState()
+	{
+		return (m_ePlayerState == ePlayerState.Dead || m_ePlayerState == ePlayerState.None || m_ePlayerState == ePlayerState.Goal);
 	}
 
 	public void SetState(ePlayerState state)

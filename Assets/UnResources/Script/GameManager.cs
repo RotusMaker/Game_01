@@ -95,7 +95,7 @@ public class GameManager : MonoSingleton<GameManager>
 		case eGameState.Result:
 			{
 				m_ui.OnLoading(true, "Game Reset Loading...");
-				StartCoroutine (Result ());
+				StartCoroutine (Result (m_movePlayer.IsGoal()));
 			}
 			break;
 		}
@@ -107,7 +107,7 @@ public class GameManager : MonoSingleton<GameManager>
 		case eGameState.Play:
 			if (m_movePlayer != null)
 			{
-				if (m_movePlayer.IsDead ())
+				if (m_movePlayer.IsDead () || m_movePlayer.IsGoal())
 				{
 					SetState (eGameState.Result);
 				}
@@ -210,11 +210,14 @@ public class GameManager : MonoSingleton<GameManager>
 		yield return null;
 	}
 
-	IEnumerator Result()
+	IEnumerator Result(bool success)
 	{
-		Debug.Log ("Result 연출.");
-		yield return new WaitForSeconds(1.5f);
-		Debug.Log ("Result 연출 끝");
+		yield return null;
+		this.m_ui.ActiveResultPopup (true, success?"Success!":"Failed!");	//결과 팝업을 띄움.
+	}
+
+	public void RestartGame()
+	{
 		StartCoroutine(ResetGame ());
 	}
 }

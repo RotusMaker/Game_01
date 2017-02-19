@@ -20,10 +20,19 @@ public class ChracterTriggerEvent : MonoBehaviour
 
 	void OnCollisionEnter(Collision collision)
 	{
+		Debug.Log(collision.gameObject.name);
 		// death zone 감지.
 		if (collision.gameObject.CompareTag ("DeathZone")) {
-			Debug.Log(collision.gameObject.name);
 			m_movePlayer.SetState (Moving.ePlayerState.Dead);
+		}
+	}
+
+	void OnTriggerEnter(Collider other)
+	{
+		// trigger 체크.
+		Debug.Log(other.gameObject.name);
+		if (other.gameObject.CompareTag ("GoalZone")) {
+			m_movePlayer.SetState (Moving.ePlayerState.Goal);
 		}
 	}
 

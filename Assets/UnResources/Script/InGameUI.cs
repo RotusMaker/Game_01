@@ -24,9 +24,11 @@ public class InGameUI : MonoBehaviour
 		else {
 			m_dicPopup.Add("Popup_option", m_objRoot.transform.FindChild ("Popup_option").gameObject);
 			m_dicPopup.Add ("Popup_Loading", m_objRoot.transform.FindChild ("Popup_Loading").gameObject);
+			m_dicPopup.Add("Popup_Result", m_objRoot.transform.FindChild ("Popup_Result").gameObject);
 			m_dicInputField.Add ("bg", m_objRoot.transform.FindChild ("Popup_option/InputField_bg").GetComponent<InputField>());
 			m_dicInputField.Add ("stage", m_objRoot.transform.FindChild ("Popup_option/InputField_stage").GetComponent<InputField>());
 			m_dicText.Add("Popup_Loading/Text",m_objRoot.transform.FindChild ("Popup_Loading/Text").GetComponent<Text>());
+			m_dicText.Add("Popup_Result/Text",m_objRoot.transform.FindChild ("Popup_Result/Text").GetComponent<Text>());
 		}
 	}
 
@@ -45,6 +47,24 @@ public class InGameUI : MonoBehaviour
 				m_dicText ["Popup_Loading/Text"].text = content;
 			}
 		}
+	}
+
+	public void ActiveResultPopup(bool active, string content)
+	{
+		if (m_dicPopup.ContainsKey ("Popup_Result")) {
+			m_dicPopup ["Popup_Result"].SetActive (active);
+			if (active == true) {
+				if (m_dicText.ContainsKey ("Popup_Result/Text")) {
+					m_dicText ["Popup_Result/Text"].text = content;
+				}
+			}
+		}
+	}
+
+	public void OnClickedReStart()
+	{
+		ActiveResultPopup (false, string.Empty);
+		GameManager.GetInstance.RestartGame ();
 	}
 
 	public void OnClickedStart()
