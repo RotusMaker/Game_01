@@ -244,10 +244,11 @@ public class Moving : MonoBehaviour
 		m_nCurrentPos = 0;
 	}
 
-	public void ResetGame()
+	public void ResetGame(float startDistance = 0f)
 	{
 		SetState(ePlayerState.None);
-		transform.localPosition = m_vecOriginPos;
+		//Debug.LogWarning ("local Position: "+startDistance.ToString());
+		transform.localPosition = new Vector3(m_vecOriginPos.x, m_vecOriginPos.y, (startDistance == 0f)?m_vecOriginPos.z:startDistance);
 		m_eDirection = eDirection.None;
 		m_nCurrentPos = 0;
 		m_deadCheck.isTrigging = false;

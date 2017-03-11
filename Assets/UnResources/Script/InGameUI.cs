@@ -9,6 +9,7 @@ public class InGameUI : MonoBehaviour
 	private Dictionary<string, GameObject> m_dicPopup = new Dictionary<string, GameObject> ();
 	private Dictionary<string, InputField> m_dicInputField = new Dictionary<string, InputField>();
 	private Dictionary<string, Text> m_dicText = new Dictionary<string, Text>();
+	private Slider m_resultSlider;
 
 	void Start()
 	{
@@ -29,7 +30,10 @@ public class InGameUI : MonoBehaviour
 			m_dicInputField.Add ("stage", m_objRoot.transform.FindChild ("Popup_option/InputField_stage").GetComponent<InputField>());
 			m_dicText.Add("Popup_Loading/Text",m_objRoot.transform.FindChild ("Popup_Loading/Text").GetComponent<Text>());
 			m_dicText.Add("Popup_Result/Text",m_objRoot.transform.FindChild ("Popup_Result/Text").GetComponent<Text>());
+			m_dicText.Add("Popup_Result/DistanceText",m_objRoot.transform.FindChild ("Popup_Result/DistanceText").GetComponent<Text>());
 			m_dicText.Add("Infomation/Text",m_objRoot.transform.FindChild ("Infomation/Text").GetComponent<Text>());
+
+			m_resultSlider = m_objRoot.transform.FindChild ("Popup_Result/Slider").GetComponent<Slider> ();
 		}
 	}
 
@@ -57,7 +61,8 @@ public class InGameUI : MonoBehaviour
 		}
 	}
 
-	public void ActiveResultPopup(bool active, string content)
+	// 결과창 열기.
+	public void ActiveResultPopup(bool active, string content, float distance, float maxDistance)
 	{
 		if (m_dicPopup.ContainsKey ("Popup_Result")) {
 			m_dicPopup ["Popup_Result"].SetActive (active);
@@ -65,14 +70,66 @@ public class InGameUI : MonoBehaviour
 				if (m_dicText.ContainsKey ("Popup_Result/Text")) {
 					m_dicText ["Popup_Result/Text"].text = content;
 				}
+				if (m_dicText.ContainsKey ("Popup_Result/DistanceText")) {
+					m_dicText ["Popup_Result/DistanceText"].text = distance.ToString();
+					m_resultSlider.maxValue = maxDistance;
+					m_resultSlider.minValue = 0f;
+					m_resultSlider.value = distance;
+				}
 			}
+		}
+	}
+
+	public void OnResultSliderUpdate()
+	{
+		if (m_dicText.ContainsKey ("Popup_Result/DistanceText")) {
+			m_dicText ["Popup_Result/DistanceText"].text = m_resultSlider.value.ToString ();
 		}
 	}
 
 	public void OnClickedReStart()
 	{
-		ActiveResultPopup (false, string.Empty);
-		GameManager.GetInstance.RestartGame ();
+		ActiveResultPopup (false, string.Empty, 0f, 1f);
+		float startDistance = m_resultSlider.value;
+		GameManager.GetInstance.RestartGame (startDistance);
+	}
+
+	public void OnClickedNextStart()
+	{
+		ActiveResultPopup (false, string.Empty, 0f, 1f);
+
+		//LoadPrefabManager.GetInstance.ResetBackground ();
+		LoadPrefabManager.GetInstance.ResetStage ();
+
+		//GameManager.GetInstance.m_gameLoadInfo = new GameManager.GameLoadInfo ();
+		//GameManager.GetInstance.m_gameLoadInfo.mapID = GameManager.GetInstance.m_gameLoadInfo.mapID;
+		int stageID = GameManager.GetInstance.m_gameLoadInfo.stageID + 1;
+		if (stageID <= 0) {
+			stageID = 1;
+		}
+		GameManager.GetInstance.m_gameLoadInfo.stageID = stageID;
+		GameManager.GetInstance.m_fDistance = 0f;
+		GameManager.GetInstance.m_nGameScore = 0;
+		GameManager.GetInstance.SetState (GameManager.eGameState.Loading_Stage);
+	}
+
+	public void OnClickedPrevStart()
+	{
+		ActiveResultPopup (false, string.Empty, 0f, 1f);
+
+		//LoadPrefabManager.GetInstance.ResetBackground ();
+		LoadPrefabManager.GetInstance.ResetStage ();
+
+		//GameManager.GetInstance.m_gameLoadInfo = new GameManager.GameLoadInfo ();
+		//GameManager.GetInstance.m_gameLoadInfo.mapID = GameManager.GetInstance.m_gameLoadInfo.mapID;
+		int stageID = GameManager.GetInstance.m_gameLoadInfo.stageID - 1;
+		if (stageID <= 0) {
+			stageID = 1;
+		}
+		GameManager.GetInstance.m_gameLoadInfo.stageID = stageID;
+		GameManager.GetInstance.m_fDistance = 0f;
+		GameManager.GetInstance.m_nGameScore = 0;
+		GameManager.GetInstance.SetState (GameManager.eGameState.Loading_Stage);
 	}
 
 	public void OnClickedStart()

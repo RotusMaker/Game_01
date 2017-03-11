@@ -14,8 +14,9 @@ public class GameManager : MonoSingleton<GameManager>
 	public InGameUI m_ui;
 	[HideInInspector] public GameLoadInfo m_gameLoadInfo = null;
 	private Moving m_movePlayer;
-	private int m_nGameScore = 0;
+	[HideInInspector] public int m_nGameScore = 0;
 	private float m_fScoreTick = 0f;
+	[HideInInspector] public float m_fDistance = 0f;
 
 	public enum eGameState
 	{
@@ -46,7 +47,7 @@ public class GameManager : MonoSingleton<GameManager>
 	void Start ()
 	{
 		m_movePlayer = m_player.GetComponent<Moving> ();
-		m_movePlayer.ResetGame ();
+		m_movePlayer.ResetGame (m_fDistance);
 
 		SetState (eGameState.None);
 	}
@@ -85,7 +86,7 @@ public class GameManager : MonoSingleton<GameManager>
 				if (startPos != null) {
 					m_movePlayer.SetOrigPos (startPos.localPosition);
 				}
-				m_movePlayer.ResetGame ();
+				m_movePlayer.ResetGame (m_fDistance);
 			}
 			break;
 		case eGameState.Play:
@@ -171,7 +172,8 @@ public class GameManager : MonoSingleton<GameManager>
 	{
 		m_nGameScore = 0;
 		m_ui.SetScoreText (0);
-		m_movePlayer.ResetGame();
+		m_movePlayer.ResetGame(m_fDistance);
+		Debug.LogWarning ("Distance: " + m_fDistance.ToString());
 		yield return null;
 		GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageID);
 		yield return StartCoroutine(SearchTrigger (stageObj));
@@ -224,11 +226,14 @@ public class GameManager : MonoSingleton<GameManager>
 	IEnumerator Result(bool success)
 	{
 		yield return null;
-		this.m_ui.ActiveResultPopup (true, success?"Success!":"Failed!");	//결과 팝업을 띄움.
+		m_fDistance = m_movePlayer.transform.localPosition.z;
+		string content = string.Format("{0}\n{1}Point",success?"Success!":"Failed!",m_nGameScore);
+		this.m_ui.ActiveResultPopup (true, content, m_fDistance, m_fDistance*2f);	//결과 팝업을 띄움.
 	}
 
-	public void RestartGame()
+	public void RestartGame(float startDistance = 0f)
 	{
+		m_fDistance = startDistance;
 		StartCoroutine(ResetGame ());
 	}
 }
