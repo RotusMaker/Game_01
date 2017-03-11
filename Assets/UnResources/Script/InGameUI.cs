@@ -9,6 +9,7 @@ public class InGameUI : MonoBehaviour
 	private Dictionary<string, GameObject> m_dicPopup = new Dictionary<string, GameObject> ();
 	private Dictionary<string, InputField> m_dicInputField = new Dictionary<string, InputField>();
 	private Dictionary<string, Text> m_dicText = new Dictionary<string, Text>();
+	private Dictionary<string, Image> m_dicImage = new Dictionary<string, Image>();
 	private Slider m_resultSlider;
 	private Dropdown m_stageOption;
 
@@ -17,6 +18,7 @@ public class InGameUI : MonoBehaviour
 		m_dicPopup.Clear ();
 		m_dicInputField.Clear ();
 		m_dicText.Clear ();
+		m_dicImage.Clear ();
 
 		m_objRoot = this.gameObject;
 
@@ -33,6 +35,8 @@ public class InGameUI : MonoBehaviour
 			m_dicText.Add("Popup_Result/Text",m_objRoot.transform.FindChild ("Popup_Result/Text").GetComponent<Text>());
 			m_dicText.Add("Popup_Result/DistanceText",m_objRoot.transform.FindChild ("Popup_Result/DistanceText").GetComponent<Text>());
 			m_dicText.Add("Infomation/Text",m_objRoot.transform.FindChild ("Infomation/Text").GetComponent<Text>());
+			m_dicImage.Add ("Infomation/LeftDamageImage",m_objRoot.transform.FindChild ("Infomation/LeftDamageImage").GetComponent<Image>());
+			m_dicImage.Add ("Infomation/RightDamageImage",m_objRoot.transform.FindChild ("Infomation/RightDamageImage").GetComponent<Image>());
 
 			m_resultSlider = m_objRoot.transform.FindChild ("Popup_Result/Slider").GetComponent<Slider> ();
 			m_stageOption = m_objRoot.transform.FindChild ("Popup_option/Dropdown").GetComponent<Dropdown> ();
@@ -43,6 +47,20 @@ public class InGameUI : MonoBehaviour
 	{
 		if (m_dicText.ContainsKey ("Infomation/Text")) {
 			m_dicText ["Infomation/Text"].text = score.ToString();
+		}
+	}
+
+	public void OnDamageInfo(int direction, float alpha)
+	{
+		if (direction == 0) {
+			if (m_dicImage.ContainsKey ("Infomation/LeftDamageImage")) {
+				m_dicImage ["Infomation/LeftDamageImage"].color = new Color(1f,0f,0f,alpha);
+			}
+		} 
+		else if (direction == 1) {
+			if (m_dicImage.ContainsKey ("Infomation/RightDamageImage")) {
+				m_dicImage ["Infomation/RightDamageImage"].color = new Color(1f,0f,0f,alpha);
+			}
 		}
 	}
 

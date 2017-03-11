@@ -175,6 +175,7 @@ public class Moving : MonoBehaviour
 		if (m_deadCheck.isTrigging || transform.localPosition.y <= -100f) 
 		{
 			//Debug.LogError("Dead Check: "+m_deadCheck.isTrigging.ToString()+" "+transform.localPosition.y.ToString());
+			GameManager.GetInstance.m_ui.OnDamageInfo(m_deadCheck.collDirection, 1f);
 			SetState (ePlayerState.Dead);
 		}
 

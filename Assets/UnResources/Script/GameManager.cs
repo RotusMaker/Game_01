@@ -179,6 +179,8 @@ public class GameManager : MonoSingleton<GameManager>
 	{
 		m_nGameScore = 0;
 		m_ui.SetScoreText (0);
+		m_ui.OnDamageInfo (0, 0f);
+		m_ui.OnDamageInfo (1, 0f);
 		m_movePlayer.ResetGame(m_fDistance);
 		Debug.LogWarning ("Distance: " + m_fDistance.ToString());
 		yield return null;
