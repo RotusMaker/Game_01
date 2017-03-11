@@ -14,6 +14,8 @@ public class GameManager : MonoSingleton<GameManager>
 	public InGameUI m_ui;
 	[HideInInspector] public GameLoadInfo m_gameLoadInfo = null;
 	private Moving m_movePlayer;
+	private int m_nGameScore = 0;
+	private float m_fScoreTick = 0f;
 
 	public enum eGameState
 	{
@@ -107,9 +109,16 @@ public class GameManager : MonoSingleton<GameManager>
 		case eGameState.Play:
 			if (m_movePlayer != null)
 			{
-				if (m_movePlayer.IsDead () || m_movePlayer.IsGoal())
-				{
+				if (m_movePlayer.IsDead () || m_movePlayer.IsGoal ()) {
 					SetState (eGameState.Result);
+				} 
+				else {
+					m_fScoreTick += Time.deltaTime;
+					if (m_fScoreTick >= 0.1f) {
+						m_fScoreTick = 0f;
+						m_nGameScore += 1;
+						m_ui.SetScoreText (m_nGameScore);
+					}
 				}
 			}
 			break;
@@ -160,6 +169,8 @@ public class GameManager : MonoSingleton<GameManager>
 
 	IEnumerator ResetGame()
 	{
+		m_nGameScore = 0;
+		m_ui.SetScoreText (0);
 		m_movePlayer.ResetGame();
 		yield return null;
 		GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageID);

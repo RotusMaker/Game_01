@@ -29,6 +29,14 @@ public class InGameUI : MonoBehaviour
 			m_dicInputField.Add ("stage", m_objRoot.transform.FindChild ("Popup_option/InputField_stage").GetComponent<InputField>());
 			m_dicText.Add("Popup_Loading/Text",m_objRoot.transform.FindChild ("Popup_Loading/Text").GetComponent<Text>());
 			m_dicText.Add("Popup_Result/Text",m_objRoot.transform.FindChild ("Popup_Result/Text").GetComponent<Text>());
+			m_dicText.Add("Infomation/Text",m_objRoot.transform.FindChild ("Infomation/Text").GetComponent<Text>());
+		}
+	}
+
+	public void SetScoreText(int score)
+	{
+		if (m_dicText.ContainsKey ("Infomation/Text")) {
+			m_dicText ["Infomation/Text"].text = score.ToString();
 		}
 	}
 
