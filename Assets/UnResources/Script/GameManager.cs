@@ -182,7 +182,7 @@ public class GameManager : MonoSingleton<GameManager>
 		m_ui.OnDamageInfo (0, 0f);
 		m_ui.OnDamageInfo (1, 0f);
 		m_movePlayer.ResetGame(m_fDistance);
-		Debug.LogWarning ("Distance: " + m_fDistance.ToString());
+		//Debug.LogWarning ("Distance: " + m_fDistance.ToString());
 		yield return null;
 		GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageType.ToString(),m_gameLoadInfo.stageID);
 		yield return StartCoroutine(SearchTrigger (stageObj));

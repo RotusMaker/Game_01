@@ -133,6 +133,8 @@ public class InGameUI : MonoBehaviour
 		GameManager.GetInstance.m_gameLoadInfo.stageID = stageID;
 		GameManager.GetInstance.m_fDistance = 0f;
 		GameManager.GetInstance.m_nGameScore = 0;
+		GameManager.GetInstance.m_ui.OnDamageInfo (0, 0f);
+		GameManager.GetInstance.m_ui.OnDamageInfo (1, 0f);
 		GameManager.GetInstance.SetState (GameManager.eGameState.Loading_Stage);
 	}
 
@@ -155,6 +157,8 @@ public class InGameUI : MonoBehaviour
 		GameManager.GetInstance.m_gameLoadInfo.stageID = stageID;
 		GameManager.GetInstance.m_fDistance = 0f;
 		GameManager.GetInstance.m_nGameScore = 0;
+		GameManager.GetInstance.m_ui.OnDamageInfo (0, 0f);
+		GameManager.GetInstance.m_ui.OnDamageInfo (1, 0f);
 		GameManager.GetInstance.SetState (GameManager.eGameState.Loading_Stage);
 	}
 
