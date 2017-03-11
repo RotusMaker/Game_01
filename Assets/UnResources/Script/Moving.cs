@@ -145,7 +145,12 @@ public class Moving : MonoBehaviour
 		// Ground Check.
 		if (m_ePlayerState == ePlayerState.Jump || m_ePlayerState == ePlayerState.TwoJump) {
 			if (m_groundCheck.isTrigging) {
-				SetState (ePlayerState.Run);
+				if (m_groundCheck.touchTag.CompareTo ("death") == 0) {
+					SetState (ePlayerState.Dead);
+				}
+				else {
+					SetState (ePlayerState.Run);
+				}
 			}
 		}
 
@@ -291,7 +296,7 @@ public class Moving : MonoBehaviour
 			{
 				SetState (ePlayerState.Jump);
 				// ground check를 바로 다시하면 상태가 잘못 정해짐.
-				m_groundCheck.isTrigging = false;
+				m_groundCheck.ResetGroundCheck();
 
 				m_rigidbody.velocity = new Vector3 (0f, 0f, m_rigidbody.velocity.z);
 				m_rigidbody.AddForce (Vector3.up * m_fJumpPower);
