@@ -10,6 +10,7 @@ public class InGameUI : MonoBehaviour
 	private Dictionary<string, InputField> m_dicInputField = new Dictionary<string, InputField>();
 	private Dictionary<string, Text> m_dicText = new Dictionary<string, Text>();
 	private Slider m_resultSlider;
+	private Dropdown m_stageOption;
 
 	void Start()
 	{
@@ -34,6 +35,7 @@ public class InGameUI : MonoBehaviour
 			m_dicText.Add("Infomation/Text",m_objRoot.transform.FindChild ("Infomation/Text").GetComponent<Text>());
 
 			m_resultSlider = m_objRoot.transform.FindChild ("Popup_Result/Slider").GetComponent<Slider> ();
+			m_stageOption = m_objRoot.transform.FindChild ("Popup_option/Dropdown").GetComponent<Dropdown> ();
 		}
 	}
 
@@ -103,6 +105,9 @@ public class InGameUI : MonoBehaviour
 
 		//GameManager.GetInstance.m_gameLoadInfo = new GameManager.GameLoadInfo ();
 		//GameManager.GetInstance.m_gameLoadInfo.mapID = GameManager.GetInstance.m_gameLoadInfo.mapID;
+		if (GameManager.GetInstance.m_gameLoadInfo == null) {
+			GameManager.GetInstance.m_gameLoadInfo = new GameManager.GameLoadInfo ();
+		}
 		int stageID = GameManager.GetInstance.m_gameLoadInfo.stageID + 1;
 		if (stageID <= 0) {
 			stageID = 1;
@@ -122,6 +127,9 @@ public class InGameUI : MonoBehaviour
 
 		//GameManager.GetInstance.m_gameLoadInfo = new GameManager.GameLoadInfo ();
 		//GameManager.GetInstance.m_gameLoadInfo.mapID = GameManager.GetInstance.m_gameLoadInfo.mapID;
+		if (GameManager.GetInstance.m_gameLoadInfo == null) {
+			GameManager.GetInstance.m_gameLoadInfo = new GameManager.GameLoadInfo ();
+		}
 		int stageID = GameManager.GetInstance.m_gameLoadInfo.stageID - 1;
 		if (stageID <= 0) {
 			stageID = 1;
@@ -134,16 +142,21 @@ public class InGameUI : MonoBehaviour
 
 	public void OnClickedStart()
 	{
-		if (m_dicInputField.ContainsKey ("bg") && m_dicInputField.ContainsKey ("stage")) 
+		//if (m_dicInputField.ContainsKey ("bg") && m_dicInputField.ContainsKey ("stage"))
+		if (m_dicInputField.ContainsKey ("stage")) 
 		{
 			LoadPrefabManager.GetInstance.ResetBackground ();
 			LoadPrefabManager.GetInstance.ResetStage ();
 
-			string bgID = m_dicInputField ["bg"].text;
+			//string bgID = m_dicInputField ["bg"].text;
+			string bgID = "3";
 			string stageID = m_dicInputField ["stage"].text;
-			GameManager.GetInstance.m_gameLoadInfo = new GameManager.GameLoadInfo ();
+			if (GameManager.GetInstance.m_gameLoadInfo == null) {
+				GameManager.GetInstance.m_gameLoadInfo = new GameManager.GameLoadInfo ();
+			}
 			GameManager.GetInstance.m_gameLoadInfo.mapID = System.Convert.ToInt32(bgID);
 			GameManager.GetInstance.m_gameLoadInfo.stageID = System.Convert.ToInt32(stageID);
+			GameManager.GetInstance.m_gameLoadInfo.stageType = (GameManager.eStageType)m_stageOption.value;
 			GameManager.GetInstance.SetState (GameManager.eGameState.Loading_Background);
 		}
 	}

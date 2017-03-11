@@ -3,10 +3,17 @@ using System.Collections;
 
 public class GameManager : MonoSingleton<GameManager>
 {
+	public enum eStageType
+	{
+		R = 0,
+		O,
+	}
+
 	public class GameLoadInfo
 	{
 		public int mapID;
 		public int stageID;
+		public eStageType stageType = eStageType.R;
 	}
 	
 	public GameObject m_player;
@@ -74,14 +81,14 @@ public class GameManager : MonoSingleton<GameManager>
 			{
 				m_ui.OnLoading(true, "Stage Loading...");
 				if (m_gameLoadInfo != null) {
-					LoadPrefabManager.GetInstance.LoadStage (m_gameLoadInfo.stageID, m_root.transform);
+					LoadPrefabManager.GetInstance.LoadStage (m_gameLoadInfo.stageType.ToString(), m_gameLoadInfo.stageID, m_root.transform);
 				}
 			}
 			break;
 		case eGameState.Ready:
 			{
 				m_ui.OnLoading(true, "Character Loading...");
-				GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageID);
+				GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageType.ToString(), m_gameLoadInfo.stageID);
 				Transform startPos = stageObj.transform.FindChild ("StartPosition");
 				if (startPos != null) {
 					m_movePlayer.SetOrigPos (startPos.localPosition);
@@ -175,7 +182,7 @@ public class GameManager : MonoSingleton<GameManager>
 		m_movePlayer.ResetGame(m_fDistance);
 		Debug.LogWarning ("Distance: " + m_fDistance.ToString());
 		yield return null;
-		GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageID);
+		GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageType.ToString(),m_gameLoadInfo.stageID);
 		yield return StartCoroutine(SearchTrigger (stageObj));
 		SetState (eGameState.Play);
 	}
