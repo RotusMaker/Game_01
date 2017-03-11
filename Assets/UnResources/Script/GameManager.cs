@@ -94,7 +94,7 @@ public class GameManager : MonoSingleton<GameManager>
 			break;
 		case eGameState.Result:
 			{
-				m_ui.OnLoading(true, "Game Reset Loading...");
+				//m_ui.OnLoading(false, "Game Reset Loading...");
 				StartCoroutine (Result (m_movePlayer.IsGoal()));
 			}
 			break;
