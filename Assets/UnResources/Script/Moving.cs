@@ -93,21 +93,6 @@ public class Moving : MonoBehaviour
 			return;
 		}
 
-		// 1초간 정지하면 죽음.
-		if (Mathf.Abs(m_fCurrentPos-transform.localPosition.z) <= 0.1f) {
-			m_fDeadTimer += Time.deltaTime;
-			if (m_fDeadTimer >= 1.0f) {
-				m_fDeadTimer = 0f;
-				SetState (ePlayerState.Dead);
-				return;
-			}
-		} 
-		else {
-			m_fDeadTimer = 0f;
-		}
-		//Debug.LogWarning (string.Format("### CurPos:{0} LocalPos:{1} Time:{2}",m_fCurrentPos,transform.localPosition.z,m_fDeadTimer));
-		m_fCurrentPos = transform.localPosition.z;
-
 		float purpose = 0f;
 		switch (m_eDirection)
 		{
@@ -137,6 +122,21 @@ public class Moving : MonoBehaviour
 		default:
 			break;
 		}
+
+		// 1초간 정지하면 죽음.
+		if (Mathf.Abs(m_fCurrentPos-transform.localPosition.z) <= 0.1f) {
+			m_fDeadTimer += Time.deltaTime;
+			if (m_fDeadTimer >= 1.0f) {
+				m_fDeadTimer = 0f;
+				SetState (ePlayerState.Dead);
+				return;
+			}
+		} 
+		else {
+			m_fDeadTimer = 0f;
+		}
+		//Debug.LogWarning (string.Format("### CurPos:{0} LocalPos:{1} Time:{2}",m_fCurrentPos,transform.localPosition.z,m_fDeadTimer));
+		m_fCurrentPos = transform.localPosition.z;
 	}
 
 	void FixedUpdate()
