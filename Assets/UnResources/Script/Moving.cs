@@ -46,6 +46,8 @@ public class Moving : MonoBehaviour
 	private float m_fMaxRightPos = 0f;
 	private float m_fMaxLeftPos = 0f;
 	private float m_fDashTimer = 0f;
+	private float m_fDeadTimer = 0f;
+	private float m_fCurrentPos = 0f;
 
 	private int m_nCurrentPos = 0;
 
@@ -90,6 +92,21 @@ public class Moving : MonoBehaviour
 			}
 			return;
 		}
+
+		// 1초간 정지하면 죽음.
+		if (Mathf.Abs(m_fCurrentPos-transform.localPosition.z) <= 0.1f) {
+			m_fDeadTimer += Time.deltaTime;
+			if (m_fDeadTimer >= 1.0f) {
+				m_fDeadTimer = 0f;
+				SetState (ePlayerState.Dead);
+				return;
+			}
+		} 
+		else {
+			m_fDeadTimer = 0f;
+		}
+		//Debug.LogWarning (string.Format("### CurPos:{0} LocalPos:{1} Time:{2}",m_fCurrentPos,transform.localPosition.z,m_fDeadTimer));
+		m_fCurrentPos = transform.localPosition.z;
 
 		float purpose = 0f;
 		switch (m_eDirection)
