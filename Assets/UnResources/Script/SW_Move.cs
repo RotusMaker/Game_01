@@ -15,7 +15,7 @@ public class SW_Move : SW_Root {
 	public override void Reset()
 	{
 		base.Reset ();
-		this.transform.localPosition = orgPosition;
+		orgPosition = this.transform.localPosition;
 		this.gameObject.SetActive (true);
 	}
 
