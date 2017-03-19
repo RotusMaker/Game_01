@@ -10,20 +10,28 @@ public class LoadPrefabManager : MonoSingleton<LoadPrefabManager>
 	private Dictionary<string, GameObject> m_dicBackground = new Dictionary<string, GameObject> ();
 	private Dictionary<string, GameObject> m_dicStage = new Dictionary<string, GameObject> ();
 
-	public GameObject GetStage(string stageType, int stageID)
+	public GameObject GetStage(eStageType stageType, int stageID)
 	{
-		string stageName = string.Format ("Round_{0}_{1:00}",stageType,stageID);
+		string stageName = string.Format ("Round_{0}_{1:00}", stageType.ToString (), stageID); 
+		if (stageType == eStageType.Pattern) {
+			stageName = string.Format ("Pattern - e{0}", stageID); 
+		}
+
 		if (m_dicStage.ContainsKey (stageName)) {
 			return m_dicStage [stageName];
 		}
 		return null;
 	}
 
-	public void LoadStage(string stageType, int stageID, Transform parent)
+	public void LoadStage(eStageType stageType, int stageID, Transform parent)
 	{
 		m_bLoaded = false;
-		string stageName = string.Format ("Round_{0}_{1:00}",stageType,stageID);
+		string stageName = string.Format ("Round_{0}_{1:00}",stageType.ToString(),stageID);
 		string prefabName = string.Format ("Prefab/Stage/{0}",stageName);
+		if (stageType == eStageType.Pattern) {
+			stageName = string.Format ("Pattern - e{0}",stageID);
+			prefabName = string.Format ("Pattern/{0}",stageName);
+		}
 
 		if (m_dicStage.ContainsKey (stageName)) 
 		{

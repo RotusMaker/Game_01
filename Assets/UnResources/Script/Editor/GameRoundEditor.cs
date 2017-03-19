@@ -38,6 +38,7 @@ public class GameRoundEditor : Editor {
 
 	public void FindClassChild(Transform root)
 	{
+		/*
 		for (int i = 0; i < root.childCount; i++) {
 			Transform child = root.GetChild (i);
 			if (child.GetComponent<ObjectTriggerEvent> ()) {
@@ -48,5 +49,6 @@ public class GameRoundEditor : Editor {
 				FindClassChild (child);
 			}
 		}
+		*/
 	}
 }

@@ -25,6 +25,14 @@ public class Moving : MonoBehaviour
 	}
 	private ePlayerState m_ePlayerState = ePlayerState.None;
 
+	public enum eSkillState
+	{
+		None,
+		TwoJump,
+		Dash,
+	}
+	private eSkillState m_eSkillSlot = eSkillState.None;	// 현재 장착된 스킬.
+
 	private Rigidbody m_rigidbody;
 	private CapsuleCollider m_Capsule;
 	public float m_fForwardVelocity = 5f;	// 속도.
@@ -319,13 +327,17 @@ public class Moving : MonoBehaviour
 
 				m_rigidbody.velocity = new Vector3 (0f, 0f, m_rigidbody.velocity.z);
 				m_rigidbody.AddForce (Vector3.up * m_fJumpPower);
-			} 
+			}
 			else if (m_ePlayerState == ePlayerState.Jump) 
 			{
-				SetState (ePlayerState.TwoJump);
+				// 스킬 슬롯 완료되면 넣기.
+				//if (m_eSkillSlot == eSkillState.TwoJump) {
+					SetState (ePlayerState.TwoJump);
 
-				m_rigidbody.velocity = new Vector3 (0f, 0f, m_rigidbody.velocity.z);
-				m_rigidbody.AddForce (Vector3.up * m_fJumpPower);
+					m_rigidbody.velocity = new Vector3 (0f, 0f, m_rigidbody.velocity.z);
+					m_rigidbody.AddForce (Vector3.up * m_fJumpPower);
+					m_eSkillSlot = eSkillState.None;
+				//}
 			}
 		}
 	}

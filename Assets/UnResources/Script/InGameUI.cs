@@ -37,6 +37,7 @@ public class InGameUI : MonoBehaviour
 			m_dicText.Add("Infomation/Text",m_objRoot.transform.FindChild ("Infomation/Text").GetComponent<Text>());
 			m_dicImage.Add ("Infomation/LeftDamageImage",m_objRoot.transform.FindChild ("Infomation/LeftDamageImage").GetComponent<Image>());
 			m_dicImage.Add ("Infomation/RightDamageImage",m_objRoot.transform.FindChild ("Infomation/RightDamageImage").GetComponent<Image>());
+			m_dicImage.Add ("Infomation/SkillSlot",m_objRoot.transform.FindChild ("Infomation/SkillSlot").GetComponent<Image>());
 
 			m_resultSlider = m_objRoot.transform.FindChild ("Popup_Result/Slider").GetComponent<Slider> ();
 			m_stageOption = m_objRoot.transform.FindChild ("Popup_option/Dropdown").GetComponent<Dropdown> ();
@@ -178,7 +179,7 @@ public class InGameUI : MonoBehaviour
 			}
 			GameManager.GetInstance.m_gameLoadInfo.mapID = System.Convert.ToInt32(bgID);
 			GameManager.GetInstance.m_gameLoadInfo.stageID = System.Convert.ToInt32(stageID);
-			GameManager.GetInstance.m_gameLoadInfo.stageType = (GameManager.eStageType)m_stageOption.value;
+			GameManager.GetInstance.m_gameLoadInfo.stageType = (eStageType)m_stageOption.value;
 			GameManager.GetInstance.SetState (GameManager.eGameState.Loading_Background);
 		}
 	}

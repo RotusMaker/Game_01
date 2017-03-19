@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum eStageType
+{
+	R = 0,
+	O,
+	Pattern
+};
+
 public class GameManager : MonoSingleton<GameManager>
 {
-	public enum eStageType
-	{
-		R = 0,
-		O,
-		Pattern
-	}
-
 	public class GameLoadInfo
 	{
 		public int mapID;
@@ -82,14 +82,14 @@ public class GameManager : MonoSingleton<GameManager>
 			{
 				m_ui.OnLoading(true, "Stage Loading...");
 				if (m_gameLoadInfo != null) {
-					LoadPrefabManager.GetInstance.LoadStage (m_gameLoadInfo.stageType.ToString(), m_gameLoadInfo.stageID, m_root.transform);
+					LoadPrefabManager.GetInstance.LoadStage (m_gameLoadInfo.stageType, m_gameLoadInfo.stageID, m_root.transform);
 				}
 			}
 			break;
 		case eGameState.Ready:
 			{
 				m_ui.OnLoading(true, "Character Loading...");
-				GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageType.ToString(), m_gameLoadInfo.stageID);
+				GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageType, m_gameLoadInfo.stageID);
 				Transform startPos = stageObj.transform.FindChild ("StartPosition");
 				if (startPos != null) {
 					m_movePlayer.SetOrigPos (startPos.localPosition);
@@ -185,7 +185,7 @@ public class GameManager : MonoSingleton<GameManager>
 		m_movePlayer.ResetGame(m_fDistance);
 		//Debug.LogWarning ("Distance: " + m_fDistance.ToString());
 		yield return null;
-		GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageType.ToString(),m_gameLoadInfo.stageID);
+		GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageType,m_gameLoadInfo.stageID);
 		yield return StartCoroutine(SearchTrigger (stageObj));
 		SetState (eGameState.Play);
 	}
@@ -197,6 +197,8 @@ public class GameManager : MonoSingleton<GameManager>
 	// 연산이 좀 많음.
 	IEnumerator SearchTrigger(GameObject root)
 	{
+		yield return null;
+		/*
 		if (root != null) {
 			GameRound round = root.GetComponent<GameRound>();
 			if (round != null) {
@@ -207,6 +209,8 @@ public class GameManager : MonoSingleton<GameManager>
 				}
 			}
 		}
+		*/
+
 		/*
 		for (int i = 0; i < root.transform.childCount; i++) {
 			Transform child = root.transform.GetChild (i);

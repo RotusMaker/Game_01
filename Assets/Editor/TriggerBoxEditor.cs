@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
 
-[CustomEditor(typeof(TriggerBox))]
+[CustomEditor(typeof(Switch))]
 public class TriggerBoxEditor : Editor {
 
-	TriggerBox myTarget;
+	Switch myTarget;
 	private ReorderableList list;
 
 	private void OnEnable()
 	{
-		myTarget = (TriggerBox)target;
+		myTarget = (Switch)target;
 		list = new ReorderableList(serializedObject, serializedObject.FindProperty("m_listTriggingData"), true, true, true, true);
 
 		list.elementHeight = EditorGUIUtility.singleLineHeight * 2f;
@@ -26,11 +26,13 @@ public class TriggerBoxEditor : Editor {
 			var element = list.serializedProperty.GetArrayElementAtIndex(index);
 			rect.y += 2;
 			EditorGUI.PropertyField(
-				new Rect(rect.x, rect.y, rect.width/2f, EditorGUIUtility.singleLineHeight),
+				new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight),
 				element.FindPropertyRelative("target"), GUIContent.none);
+			/*
 			EditorGUI.PropertyField(
 				new Rect(rect.x + rect.width/2f, rect.y, rect.width/2f, EditorGUIUtility.singleLineHeight),
 				element.FindPropertyRelative("method"), GUIContent.none);
+				*/
 		};
 	}
 
