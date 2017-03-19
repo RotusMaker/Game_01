@@ -7,6 +7,7 @@ public class GameManager : MonoSingleton<GameManager>
 	{
 		R = 0,
 		O,
+		Pattern
 	}
 
 	public class GameLoadInfo
