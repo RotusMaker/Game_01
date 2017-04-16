@@ -29,8 +29,8 @@ public class SoundManagerEditor : Editor {
 
 	public bool Linking()
 	{
-		if (myTarget.m_dicAudio == null) {
-			myTarget.m_dicAudio = new System.Collections.Generic.Dictionary<string, AudioSource>();
+		if (myTarget.m_listAudio != null) {
+			myTarget.m_listAudio.Clear ();
 		}
 		FindClassChild (myTarget.m_Root.transform);
 		return true;
@@ -43,7 +43,7 @@ public class SoundManagerEditor : Editor {
 			if (child.GetComponent<AudioSource>()) {
 				Debug.Log (string.Format("Add Audio: {0}",child.name));
 				child.GetComponent<AudioSource>().playOnAwake = false;
-				myTarget.m_dicAudio.Add (child.name, child.GetComponent<AudioSource>());
+				myTarget.m_listAudio.Add (child.GetComponent<AudioSource>());
 			}
 		}
 	}

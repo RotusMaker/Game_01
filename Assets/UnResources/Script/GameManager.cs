@@ -21,7 +21,7 @@ public class GameManager : MonoSingleton<GameManager>
 	public GameObject m_root;
 	public InGameUI m_ui;
 	[HideInInspector] public GameLoadInfo m_gameLoadInfo = null;
-	private Moving m_movePlayer;
+	private CharacterBody m_movePlayer;
 	[HideInInspector] public int m_nGameScore = 0;
 	private float m_fScoreTick = 0f;
 	[HideInInspector] public float m_fDistance = 0f;
@@ -54,7 +54,7 @@ public class GameManager : MonoSingleton<GameManager>
 
 	void Start ()
 	{
-		m_movePlayer = m_player.GetComponent<Moving> ();
+		m_movePlayer = m_player.GetComponent<CharacterBody> ();
 		m_movePlayer.ResetGame (m_fDistance);
 
 		SetState (eGameState.None);
@@ -100,7 +100,7 @@ public class GameManager : MonoSingleton<GameManager>
 		case eGameState.Play:
 			{
 				m_ui.OnLoading(false, "Go");
-				m_movePlayer.SetState (Moving.ePlayerState.Run);
+				m_movePlayer.SetState (CharacterBody.ePlayerState.Run);
 			}
 			break;
 		case eGameState.Result:
@@ -202,8 +202,7 @@ public class GameManager : MonoSingleton<GameManager>
 			GameRound round = root.GetComponent<GameRound>();
 			if (round != null) {
 				for (int i = 0; i < round.m_listTriggerObj.Count; i++) {
-					//Debug.Log (round.m_listTriggerObj[i].name);
-					round.m_listTriggerObj[i].GetComponent<SW_Root>().Reset();
+					round.m_listTriggerObj[i].GetComponent<TriggerRoot>().Reset();
 					yield return null;
 				}
 			}

@@ -40,9 +40,9 @@ public class GameRoundEditor : Editor {
 	{
 		for (int i = 0; i < root.childCount; i++) {
 			Transform child = root.GetChild (i);
-			if (child.GetComponent<ObjectTriggerEvent> ()) {
+			if (child.GetComponent<TriggerRoot> ()) {
 				Debug.Log (string.Format("Add Object: {0}",child.name));
-				myTarget.m_listTriggerObj.Add (child.gameObject);
+				myTarget.m_listTriggerObj.Add (child.GetComponent<TriggerRoot>());
 			}
 			if (child.childCount > 0) {
 				FindClassChild (child);
