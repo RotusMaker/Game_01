@@ -316,32 +316,35 @@ public class CharacterBody : MonoBehaviour
 	{
 		if (m_rigidbody != null) 
 		{
-			if (m_ePlayerState == ePlayerState.Run) 
-			{
+			if (m_ePlayerState == ePlayerState.Run) {
 				// 대쉬 아이템 먹었을때
 				if (ItemManager.GetInstance.UseSkill (eSkillState.Dash)) {
-					SetState(ePlayerState.Dash);
+					SetState (ePlayerState.Dash);
 				}
 				// 아이템 없으면 1단 점프
 				else {
 					SetState (ePlayerState.Jump);
 					// ground check를 바로 다시하면 상태가 잘못 정해짐.
-					m_groundCheck.ResetGroundCheck();
+					m_groundCheck.ResetGroundCheck ();
 					m_rigidbody.velocity = new Vector3 (0f, 0f, m_rigidbody.velocity.z);
 					m_rigidbody.AddForce (Vector3.up * m_fJumpPower);
 				}
-			}
-			else if (m_ePlayerState == ePlayerState.Jump) 
-			{
+			} else if (m_ePlayerState == ePlayerState.Jump) {
 				// 2단점프 아이템 먹으면 발동.
-				if (ItemManager.GetInstance.UseSkill(eSkillState.TwoJump)) 
-				{
+				if (ItemManager.GetInstance.UseSkill (eSkillState.TwoJump)) {
 					SetState (ePlayerState.TwoJump);
 					m_rigidbody.velocity = new Vector3 (0f, 0f, m_rigidbody.velocity.z);
 					m_rigidbody.AddForce (Vector3.up * m_fJumpPower);
 				}
+				// 대쉬 아이템 먹었을때
 				else if (ItemManager.GetInstance.UseSkill (eSkillState.Dash)) {
-					SetState(ePlayerState.Dash);
+					SetState (ePlayerState.Dash);
+				}
+			} 
+			else {
+				// 대쉬 아이템 먹었을때
+				if (ItemManager.GetInstance.UseSkill (eSkillState.Dash)) {
+					SetState (ePlayerState.Dash);
 				}
 			}
 		}
