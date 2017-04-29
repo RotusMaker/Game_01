@@ -13,7 +13,7 @@ public class GameRoundEditor : Editor {
 	}
 	public override void OnInspectorGUI()
 	{
-		myTarget.m_Root = (GameObject)EditorGUILayout.ObjectField("Camera Object", myTarget.m_Root, typeof(GameObject), true);
+		myTarget.m_Root = (GameObject)EditorGUILayout.ObjectField("Root Object", myTarget.m_Root, typeof(GameObject), true);
 		EditorGUILayout.BeginVertical ("box");
 		GUILayout.Label (myTarget.m_updateDate);
 		EditorGUILayout.EndVertical ();
@@ -40,9 +40,12 @@ public class GameRoundEditor : Editor {
 	{
 		for (int i = 0; i < root.childCount; i++) {
 			Transform child = root.GetChild (i);
-			if (child.GetComponent<TriggerRoot> ()) {
-				Debug.Log (string.Format("Add Object: {0}",child.name));
-				myTarget.m_listTriggerObj.Add (child.GetComponent<TriggerRoot>());
+			if (child.GetComponent<TriggerRoot> () != null) {
+				Debug.Log (string.Format ("Add Object: {0}", child.name));
+				myTarget.m_listTriggerObj.Add (child.GetComponent<TriggerRoot> ());
+			} 
+			else {
+				Debug.Log (string.Format("Not Add Object: {0}",child.name));
 			}
 			if (child.childCount > 0) {
 				FindClassChild (child);
