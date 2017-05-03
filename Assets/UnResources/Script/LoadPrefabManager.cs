@@ -16,6 +16,10 @@ public class LoadPrefabManager : MonoSingleton<LoadPrefabManager>
 		if (stageType == eStageType.Pattern) {
 			stageName = string.Format ("Pattern - e{0}", stageID); 
 		}
+        else if (stageType == eStageType.Test)
+        {
+            stageName = string.Format("Round_T_{0:00}", stageID);
+        }
 
 		if (m_dicStage.ContainsKey (stageName)) {
 			return m_dicStage [stageName];
@@ -32,6 +36,11 @@ public class LoadPrefabManager : MonoSingleton<LoadPrefabManager>
 			stageName = string.Format ("Pattern - e{0}",stageID);
 			prefabName = string.Format ("Pattern/{0}",stageName);
 		}
+        else if (stageType == eStageType.Test)
+        {
+            stageName = string.Format("Round_T_{0:00}", stageID);
+            prefabName = string.Format("TestStage/{0}", stageName);
+        }
 
 		if (m_dicStage.ContainsKey (stageName)) 
 		{

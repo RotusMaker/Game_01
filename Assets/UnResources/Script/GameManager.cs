@@ -5,7 +5,8 @@ public enum eStageType
 {
 	R = 0,
 	O,
-	Pattern
+	Pattern,
+    Test,
 };
 
 public class GameManager : MonoSingleton<GameManager>
