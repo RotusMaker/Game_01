@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SW_Shooting : SW_Root
+public class SW_Shooting : TriggerRoot
 {
     public GameObject m_Root;
     public GameObject m_Missile;
@@ -12,8 +12,7 @@ public class SW_Shooting : SW_Root
     public float m_fMissileGenTime = 0f;    // 미사일 생성 간격
     public BoxCollider m_boxCollider;  // 미사일 나오는 영역 = Switch 영역
     public string m_updateDate;
-
-    private Vector3 orgPosition = Vector3.zero;
+    
     private Vector3 m_vecMinArea = Vector3.zero;   // 미사일 영역 수치화
     private Vector3 m_vecMaxArea = Vector3.zero;
     private bool m_bPlayAction = false;
@@ -31,8 +30,6 @@ public class SW_Shooting : SW_Root
 
     public override void Reset()
     {
-        base.Reset();
-        orgPosition = this.transform.localPosition;
         m_bPlayAction = false;
         if (m_listMissile != null)
         {
@@ -41,7 +38,7 @@ public class SW_Shooting : SW_Root
                 m_listMissile[i].SetActive(false);
             }
         }
-        this.gameObject.SetActive(true);
+        base.Reset();
     }
 
     public void OnSwitchEnter()
@@ -53,7 +50,6 @@ public class SW_Shooting : SW_Root
         }
 
         m_bPlayAction = true;
-        orgPosition = this.transform.localPosition;
     }
 
     public void OnSwitchExit()

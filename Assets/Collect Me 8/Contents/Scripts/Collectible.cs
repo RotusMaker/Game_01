@@ -46,12 +46,14 @@ namespace C8
 	    bool bShadowWasActive;
 
 	    AudioSource ActiveSound;
-
+        
+        /*
 	    void OnDestroy () 
 	    {
 		    bWasDestroyed = true;
 		    OnDestroyed.Invoke (gameObject);
 	    }
+        */
 
 	    void OnEnable () 
 	    {
@@ -87,24 +89,34 @@ namespace C8
         void OnTriggerEnter (Collider collider) 
 	    {
 		    if (IgnoreCollisions)
-			    return;
+            {
+                return;
+            }
 
 		    GameObject colliderObject = collider.gameObject;
 
 		    if (CollideWithTags != null && CollideWithTags.Length > 0) 
 		    {
-			    foreach (string tag in CollideWithTags) 
-				    if (colliderObject.CompareTag (tag))
-					    Collect ();
+			    for(int i=0; i<CollideWithTags.Length; i++)
+                {
+                    if (colliderObject.CompareTag(CollideWithTags[i]))
+                    {
+                        Collect();
+                    }
+                }
 		    } 
-		    else 
-			    Collect ();
+		    else
+            {
+                Collect();
+            }
 	    }
 
 	    public void Collect () 
 	    {
 		    if (bCollected)
-			    return;
+            {
+                return;
+            }
 
 		    if (PlayParticles && PickupEffect != null) 
 		    {
@@ -112,7 +124,9 @@ namespace C8
 			    var scaler = PickupEffect.GetComponent<ParticleScaler> ();
 
 			    if (scaler != null)
-				    scaler.ApplyScale ();
+                {
+                    scaler.ApplyScale();
+                }
 
 			    PickupEffect.Play ();
 		    }
@@ -123,7 +137,9 @@ namespace C8
 			    int index = 0;
 
 			    if (numOfSounds > 1)
-				    index = Random.Range(0, PickupSounds.Length);
+                {
+                    index = Random.Range(0, PickupSounds.Length);
+                }
 
 			    var sound = PickupSounds [index];
 			    sound.gameObject.SetActive (true);
@@ -198,10 +214,12 @@ namespace C8
 			    bool soundsFinished = true;
 			    if (PickupSounds != null && PickupSounds.Length > 0)
 			    {
-				    foreach (var sound in PickupSounds) 
+				    for (int i=0; i<PickupSounds.Length; i++)
 				    {
-					    if (sound.isPlaying)
-						    soundsFinished = false;
+					    if (PickupSounds[i].isPlaying)
+                        {
+                            soundsFinished = false;
+                        }
 				    }
 			    }
 

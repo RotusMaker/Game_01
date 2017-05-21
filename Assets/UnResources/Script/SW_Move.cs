@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SW_Move : SW_Root {
+// 스위치를 건들면 움직이는 오브젝트들
+public class SW_Move : TriggerRoot {
 
 	//public GameObject target = null;	// 타겟이 없으면 자기자신.
 	public float delay = 0f;
@@ -10,19 +11,9 @@ public class SW_Move : SW_Root {
 	public Vector3 toPosition = Vector3.zero;
 	public iTween.EaseType easyType = iTween.EaseType.linear;
 
-	private Vector3 orgPosition = Vector3.zero;
-
-	public override void Reset()
-	{
-		base.Reset ();
-		orgPosition = this.transform.localPosition;
-		this.gameObject.SetActive (true);
-	}
-
 	public void OnSwitchEnter()
 	{
-		orgPosition = this.transform.localPosition;
-		iTween.MoveTo (this.gameObject, iTween.Hash ("position", toPosition, "islocal", true, "time", time, "delay", delay, "eatytype", iTween.EaseType.linear));
+        iTween.MoveTo (this.gameObject, iTween.Hash ("position", toPosition, "islocal", true, "time", time, "delay", delay, "eatytype", iTween.EaseType.linear));
 	}
 
 	public void OnSwitchExit()

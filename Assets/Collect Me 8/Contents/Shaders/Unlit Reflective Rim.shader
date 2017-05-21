@@ -31,7 +31,7 @@ Shader "Collect 8/Unlit Reflective Rim"
 			#pragma fragment frag
             #pragma multi_compile _ UNITY_COLORSPACE_GAMMA
             #pragma target 3.0
-			#pragma multi_compile_fog
+			//#pragma multi_compile_fog
 			
 			#include "UnityCG.cginc"
 
@@ -47,7 +47,7 @@ Shader "Collect 8/Unlit Reflective Rim"
                 half3 worldNormal : TEXCOORD0;
                 float3 worldRefl : TEXCOORD1;
                 float3 worldViewDir : TEXCOORD2;
-                UNITY_FOG_COORDS(3)
+                //UNITY_FOG_COORDS(3)
 			};
 
             // Uniform section
@@ -81,7 +81,7 @@ Shader "Collect 8/Unlit Reflective Rim"
                 float3 worldViewDir = UnityWorldSpaceViewDir(worldPos);
                 o.worldViewDir = worldViewDir;
                 o.worldRefl = reflect(-worldViewDir, worldNormal);
-                UNITY_TRANSFER_FOG(o, o.pos);
+                //UNITY_TRANSFER_FOG(o, o.pos);
 				return o;
 			}
 
@@ -128,7 +128,7 @@ Shader "Collect 8/Unlit Reflective Rim"
                 pixel.rgb = pixel.rgb * ramp + rimPixel;
             #endif
 
-                UNITY_APPLY_FOG (IN.fogCoord, pixel);
+                //UNITY_APPLY_FOG (IN.fogCoord, pixel);
 				return pixel;
 			}
 			ENDCG
