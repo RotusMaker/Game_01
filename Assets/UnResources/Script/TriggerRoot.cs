@@ -8,12 +8,25 @@ public class TriggerRoot : MonoBehaviour {
 
 	void Awake()
 	{
-		orgPosition = this.transform.localPosition;
-	}
+        //orgPosition = this.transform.localPosition;
+        InitPosition();
+    }
 
-	public void Reset()
+    public void InitPosition()
+    {
+        orgPosition = this.transform.localPosition;
+    }
+
+    /*
+    public void Reset()
 	{
 		this.transform.localPosition = orgPosition;
 		this.gameObject.SetActive (true);
 	}
+    */
+    public virtual void Reset()
+    {
+        this.transform.localPosition = orgPosition;
+        this.gameObject.SetActive(true);
+    }
 }

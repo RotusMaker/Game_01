@@ -3,198 +3,215 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System.Collections;
 
-namespace C8 {
+namespace C8
+{
+    public class Collectible : TriggerRoot
+    {
+	    [System.Serializable]
+	    public class CallbackFunction : UnityEvent <GameObject> {}
 
-public class Collectible : MonoBehaviour {
+	    [SerializeField]
+	    GameObject MeshObject;
 
-	[System.Serializable]
-	public class CallbackFunction : UnityEvent <GameObject> {}
+	    [SerializeField]
+	    GameObject ShadowObject;
 
-	[SerializeField]
-	GameObject MeshObject;
-
-	[SerializeField]
-	GameObject ShadowObject;
-
-	[SerializeField] 
-	bool PlaySounds = true;
+	    [SerializeField] 
+	    bool PlaySounds = true;
 	
-	[SerializeField] 
-	bool PlayParticles = true;
+	    [SerializeField] 
+	    bool PlayParticles = true;
 
-	[SerializeField]
-	ParticleSystem PickupEffect;
+	    [SerializeField]
+	    ParticleSystem PickupEffect;
 	
-	[SerializeField] // Will play random sound 	
-	AudioSource[] PickupSounds;
+	    [SerializeField] // Will play random sound 	
+	    AudioSource[] PickupSounds;
 
-	[SerializeField]
-	string[] CollideWithTags;
+	    [SerializeField]
+	    string[] CollideWithTags;
 
-	[SerializeField]
-	bool IgnoreCollisions;
+	    [SerializeField]
+	    bool IgnoreCollisions;
 
-	[SerializeField]
-	bool DestroyOnCollected;
+	    [SerializeField]
+	    bool DestroyOnCollected;
 
-	public CallbackFunction OnCollected;
-	public CallbackFunction OnRestored;
-	public CallbackFunction OnDestroyed;
+	    public CallbackFunction OnCollected;
+	    public CallbackFunction OnRestored;
+	    public CallbackFunction OnDestroyed;
 
-	bool bWasDestroyed;
-	bool bCollected;
-	bool bShadowWasActive;
+	    bool bWasDestroyed;
+	    bool bCollected;
+	    bool bShadowWasActive;
 
-	AudioSource ActiveSound;
+	    AudioSource ActiveSound;
 
-	void OnDestroy () 
-	{
-		bWasDestroyed = true;
-		OnDestroyed.Invoke (gameObject);
-	}
+	    void OnDestroy () 
+	    {
+		    bWasDestroyed = true;
+		    OnDestroyed.Invoke (gameObject);
+	    }
 
-	void OnEnable () 
-	{
-		if (PickupSounds != null)
-			foreach (var sound in PickupSounds)
-				sound.gameObject.SetActive (false);
-	}
+	    void OnEnable () 
+	    {
+		    if (PickupSounds != null)
+			    foreach (var sound in PickupSounds)
+				    sound.gameObject.SetActive (false);
+	    }
 
-	void Awake () 
-	{
-		if (PickupEffect != null)
-			PickupEffect.gameObject.SetActive (false);
+        // Use this for initialization
+        void Start()
+        {
+            //Application.targetFrameRate = 60;
+            if (PickupEffect != null)
+            {
+                PickupEffect.gameObject.SetActive(false);
+            }
 
-		if (ShadowObject != null) 
-			bShadowWasActive = ShadowObject.activeSelf;
-		
-		bWasDestroyed = false;
-		bCollected = false;
-	}
+            if (ShadowObject != null)
+            {
+                bShadowWasActive = ShadowObject.activeSelf;
+            }
 
-	void OnTriggerEnter (Collider collider) 
-	{
-		if (IgnoreCollisions)
-			return;
+            bWasDestroyed = false;
+            bCollected = false;
+        }
 
-		GameObject colliderObject = collider.gameObject;
+        public override void Reset()
+        {
+            Restore();
+            base.Reset();
+        }
 
-		if (CollideWithTags != null && CollideWithTags.Length > 0) 
-		{
-			foreach (string tag in CollideWithTags) 
-				if (colliderObject.CompareTag (tag))
-					Collect ();
-		} 
-		else 
-			Collect ();
-	}
+        void OnTriggerEnter (Collider collider) 
+	    {
+		    if (IgnoreCollisions)
+			    return;
 
-	public void Collect () 
-	{
-		if (bCollected)
-			return;
+		    GameObject colliderObject = collider.gameObject;
 
-		if (PlayParticles && PickupEffect != null) 
-		{
-			PickupEffect.gameObject.SetActive (true);
-			var scaler = PickupEffect.GetComponent<ParticleScaler> ();
+		    if (CollideWithTags != null && CollideWithTags.Length > 0) 
+		    {
+			    foreach (string tag in CollideWithTags) 
+				    if (colliderObject.CompareTag (tag))
+					    Collect ();
+		    } 
+		    else 
+			    Collect ();
+	    }
 
-			if (scaler != null)
-				scaler.ApplyScale ();
+	    public void Collect () 
+	    {
+		    if (bCollected)
+			    return;
 
-			PickupEffect.Play ();
-		}
+		    if (PlayParticles && PickupEffect != null) 
+		    {
+			    PickupEffect.gameObject.SetActive (true);
+			    var scaler = PickupEffect.GetComponent<ParticleScaler> ();
 
-		int numOfSounds = PickupSounds.Length;
-		if (PlaySounds && PickupSounds != null && numOfSounds > 0) 
-		{
-			int index = 0;
+			    if (scaler != null)
+				    scaler.ApplyScale ();
 
-			if (numOfSounds > 1)
-				index = Random.Range(0, PickupSounds.Length);
+			    PickupEffect.Play ();
+		    }
 
-			var sound = PickupSounds [index];
-			sound.gameObject.SetActive (true);
-			sound.Play ();
-		}
+		    int numOfSounds = PickupSounds.Length;
+		    if (PlaySounds && PickupSounds != null && numOfSounds > 0) 
+		    {
+			    int index = 0;
 
-		MeshObject.SetActive (false);
-		ShadowObject.SetActive (false);
+			    if (numOfSounds > 1)
+				    index = Random.Range(0, PickupSounds.Length);
+
+			    var sound = PickupSounds [index];
+			    sound.gameObject.SetActive (true);
+			    sound.Play ();
+		    }
+
+		    MeshObject.SetActive (false);
+		    ShadowObject.SetActive (false);
 	
-		bCollected = true;
+		    bCollected = true;
 
-		OnCollected.Invoke (gameObject);
-	}
+		    OnCollected.Invoke (gameObject);
+	    }
 
-	public void Restore ()
-	{
-		if (bWasDestroyed) 
-		{
-			Debug.LogError ("Unable to restore Collectible: GameObject was already destroyed");
-			return;
-		}
+	    public void Restore ()
+	    {
+		    if (bWasDestroyed) 
+		    {
+			    Debug.LogError ("Unable to restore Collectible: GameObject was already destroyed");
+			    return;
+		    }
 
-		bCollected = false;
-		MeshObject.SetActive (true);
+		    bCollected = false;
+		    MeshObject.SetActive (true);
 
-		if (bShadowWasActive)
-			ShadowObject.SetActive (true);
+		    if (bShadowWasActive)
+            {
+                ShadowObject.SetActive(true);
+            }
 
-		OnRestored.Invoke (gameObject);
-	}
+		    OnRestored.Invoke (gameObject);
+	    }
 
-	// Use this for initialization
-	void Start () 
-	{
-		Application.targetFrameRate = 60;
-	}
-
-	void Dispose ()
-	{
-		if (DestroyOnCollected) 
-		{
-			Destroy (gameObject);
-		}
-		else 
-		{
-			if (PickupEffect != null) 
-				PickupEffect.gameObject.SetActive (false);
+	    void Dispose ()
+	    {
+		    if (DestroyOnCollected) 
+		    {
+			    Destroy (gameObject);
+		    }
+		    else 
+		    {
+			    if (PickupEffect != null)
+                {
+                    PickupEffect.gameObject.SetActive(false);
+                }
 			
-			gameObject.SetActive (false);
-			
-			if (PickupSounds != null)
-				foreach (var sound in PickupSounds)
-					sound.gameObject.SetActive (false);
-		}
-	}
+			    gameObject.SetActive (false);
+
+			    if (PickupSounds != null)
+                {
+                    for(int i=0; i<PickupSounds.Length; i++)
+                    {
+                        PickupSounds[i].gameObject.SetActive(false);
+                    }
+                }
+		    }
+	    }
 	
-	// Update is called once per frame
-	void Update () 
-	{
-		if (bCollected)
-		{
-			bool readyToDispose = true;
+	    // Update is called once per frame
+	    void Update () 
+	    {
+		    if (bCollected)
+		    {
+			    bool readyToDispose = true;
 
-			bool effectsFinished = true;
-			if (PickupEffect != null && PickupEffect.IsAlive ())
-				effectsFinished = false;
+			    bool effectsFinished = true;
+			    if (PickupEffect != null && PickupEffect.IsAlive())
+                {
+                    effectsFinished = false;
+                }
 
-			bool soundsFinished = true;
-			if (PickupSounds != null && PickupSounds.Length > 0)
-			{
-				foreach (var sound in PickupSounds) 
-				{
-					if (sound.isPlaying)
-						soundsFinished = false;
-				}
-			}
+			    bool soundsFinished = true;
+			    if (PickupSounds != null && PickupSounds.Length > 0)
+			    {
+				    foreach (var sound in PickupSounds) 
+				    {
+					    if (sound.isPlaying)
+						    soundsFinished = false;
+				    }
+			    }
 
-			readyToDispose = soundsFinished && effectsFinished;
+			    readyToDispose = soundsFinished && effectsFinished;
 
-			if (readyToDispose) 
-				Dispose ();
-		}
-	}
-}
-
+			    if (readyToDispose)
+                {
+                    Dispose();
+                }
+		    }
+	    }
+    }
 }
