@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// 스위치 누르면 발사되는 미사일장치
 public class SW_Shooting : TriggerRoot
 {
     public GameObject m_Root;
