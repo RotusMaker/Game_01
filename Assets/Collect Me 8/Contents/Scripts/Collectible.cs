@@ -86,7 +86,7 @@ namespace C8
             base.Reset();
         }
 
-        void OnTriggerEnter (Collider collider) 
+        public virtual void OnTriggerEnter (Collider collider) 
 	    {
 		    if (IgnoreCollisions)
             {
