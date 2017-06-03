@@ -7,7 +7,7 @@
 		LOD 200
 		
 		CGPROGRAM
-		#pragma surface surf Lambert fullforwardshadows
+		#pragma surface surf Lambert
 		#pragma target 3.0
 
 		struct Input {

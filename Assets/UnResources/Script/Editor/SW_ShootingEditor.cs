@@ -13,7 +13,7 @@ public class SW_ShootingEditor : Editor
     }
     public override void OnInspectorGUI()
     {
-        myTarget.m_Root = (GameObject)EditorGUILayout.ObjectField("Root Object", myTarget.m_Root, typeof(GameObject), true);
+        //myTarget.m_Root = (GameObject)EditorGUILayout.ObjectField("Root Object", myTarget.m_Root, typeof(GameObject), true);
         myTarget.m_boxCollider = (BoxCollider)EditorGUILayout.ObjectField("Switch Object", myTarget.m_boxCollider, typeof(BoxCollider), true);
         myTarget.m_Missile = (GameObject)EditorGUILayout.ObjectField("Missile Object", myTarget.m_Missile, typeof(GameObject), true);
         myTarget.m_nMissileCnt = EditorGUILayout.IntField("Missile Count", myTarget.m_nMissileCnt);
@@ -59,7 +59,7 @@ public class SW_ShootingEditor : Editor
                 GameObject missile = GameObject.Instantiate(myTarget.m_Missile);
                 missile.transform.localScale = Vector3.one;
                 missile.transform.localPosition = Vector3.zero;
-                missile.transform.parent = myTarget.m_Root.transform;
+                missile.transform.parent = myTarget.transform;
                 missile.layer = LayerMask.NameToLayer("Round");
                 myTarget.m_listMissile.Add(missile);
             }

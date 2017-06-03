@@ -5,7 +5,7 @@ using UnityEngine;
 // 스위치 누르면 발사되는 미사일장치
 public class SW_Shooting : TriggerRoot
 {
-    public GameObject m_Root;
+    //public GameObject m_Root;
     public GameObject m_Missile;
     public List<GameObject> m_listMissile;
     public int m_nMissileCnt = 0;    // 한번에 나오는 미사일 총 개수(재활용 가능)
@@ -23,9 +23,9 @@ public class SW_Shooting : TriggerRoot
     private void Start()
     {
         //m_boxCollider = this.transform.GetComponent<BoxCollider>();
-        m_Root.transform.position = m_boxCollider.transform.position;
-        m_vecMaxArea = m_boxCollider.bounds.max - m_boxCollider.bounds.max/2f;
-        m_vecMinArea = m_boxCollider.bounds.min - m_boxCollider.bounds.max/2f;
+        this.transform.position = m_boxCollider.transform.position;
+        m_vecMaxArea = new Vector3(m_boxCollider.size.x * 0.5f, m_boxCollider.size.y * 0.5f, m_boxCollider.size.z * 0.5f);
+        m_vecMinArea = new Vector3(-(m_boxCollider.size.x * 0.5f), -(m_boxCollider.size.y * 0.5f), -(m_boxCollider.size.z * 0.5f));
         //Debug.LogError(string.Format("### max: {0} min: {1}", m_vecMaxArea, m_vecMinArea));
     }
 
@@ -77,8 +77,9 @@ public class SW_Shooting : TriggerRoot
                     {
                         int RandomX = Random.Range((int)m_vecMinArea.x, (int)m_vecMaxArea.x);
                         int RandomY = Random.Range((int)m_vecMinArea.y, (int)m_vecMaxArea.y);
-                        float length = (m_vecMaxArea.z - m_vecMinArea.z)/2f;
-                        m_listMissile[i].transform.localPosition = new Vector3((float)RandomX, (float)RandomY, m_vecMaxArea.z + length);
+                        //float length = (m_vecMaxArea.z - m_vecMinArea.z)/2f;
+                        //m_listMissile[i].transform.localPosition = m_Root.transform.localPosition;
+                        m_listMissile[i].transform.localPosition = new Vector3((float)RandomX, (float)RandomY, m_vecMaxArea.z);
                         m_listMissile[i].SetActive(true);
                         break;
                     }
