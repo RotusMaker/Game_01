@@ -53,7 +53,15 @@ public class CharacterBody : MonoBehaviour
 
 	private Vector3 m_vecOriginPos;
 
-	void Start ()
+    public class CollisionForce
+    {
+        public bool isSync = false;
+        public Vector3 m_dir = Vector3.zero;
+        public Vector3 m_org = Vector3.zero;
+    }
+    private CollisionForce m_collisionForceInfomation = new CollisionForce();
+
+    void Start ()
 	{
 		InputListener.GetInstance.begin0 += onTouch;
 		InputListener.GetInstance.end0 += onTouch;
@@ -128,12 +136,12 @@ public class CharacterBody : MonoBehaviour
 			break;
 		}
 
-		// 1초간 정지하면 죽음.
+		// 0.5초간 정지하면 죽음.
 		if (Mathf.Abs(m_fCurrentPos-transform.localPosition.z) <= 0.1f) {
 			m_fDeadTimer += Time.deltaTime;
-			if (m_fDeadTimer >= 1.0f) {
+			if (m_fDeadTimer >= 0.5f) {
 				m_fDeadTimer = 0f;
-				SetState (ePlayerState.Dead);
+				SetState (ePlayerState.Dead, new Vector3(0f, 0f, -1f), this.transform.position + Vector3.forward);
 				return;
 			}
 		} 
@@ -293,8 +301,41 @@ public class CharacterBody : MonoBehaviour
 		return (m_ePlayerState == ePlayerState.Dead || m_ePlayerState == ePlayerState.None || m_ePlayerState == ePlayerState.Goal);
 	}
 
-	public void SetState(ePlayerState state)
-	{
+    public void SetState(ePlayerState state, Vector3 dirVector, Vector3 orgVector)
+    {
+        m_collisionForceInfomation.isSync = true;
+        m_collisionForceInfomation.m_dir = dirVector;
+        m_collisionForceInfomation.m_org = orgVector;
+        this.SetState(state, null);
+    }
+
+    public void SetState(ePlayerState state, Collision collision = null)
+    {
+        if (collision == null)
+        {
+            m_collisionForceInfomation.isSync = false;
+        }
+        else
+        {
+            m_collisionForceInfomation.isSync = true;
+
+            // 충돌 사망시 방향을 알림.
+            // 충돌 점들의 평균.
+            Vector3 avgContact = Vector3.zero;
+            for (int i = 0; i < collision.contacts.Length; i++)
+            {
+                avgContact += collision.contacts[i].point;
+            }
+            avgContact /= (float)collision.contacts.Length;
+
+            // 충돌한 방향.
+            Vector3 dirVector = avgContact - this.transform.position;
+            dirVector.Normalize();
+
+            m_collisionForceInfomation.m_dir = dirVector;
+            m_collisionForceInfomation.m_org = avgContact;
+        }
+        
 		if (state == ePlayerState.None) {
 			m_ePlayerState = ePlayerState.None;
 			m_rigidbody.useGravity = false;
@@ -308,6 +349,11 @@ public class CharacterBody : MonoBehaviour
 				Debug.Log ("### State: " + m_ePlayerState.ToString ());
 				m_rigidbody.useGravity = true;
 				m_rigidbody.isKinematic = false;
+
+                if (m_ePlayerState == ePlayerState.Dead)
+                {
+                    OnDead();
+                }
 			}
 		}
 	}
@@ -349,6 +395,16 @@ public class CharacterBody : MonoBehaviour
 			}
 		}
 	}
+
+    void OnDead()
+    {
+        if (m_collisionForceInfomation.isSync == true)
+        {
+            m_collisionForceInfomation.isSync = false;
+            this.m_rigidbody.AddForceAtPosition(m_collisionForceInfomation.m_dir * -200f, m_collisionForceInfomation.m_org);
+            Debug.LogWarning(string.Format("Dir:{0}, Org:{1}",m_collisionForceInfomation.m_dir,m_collisionForceInfomation.m_org));
+        }
+    }
 
 	private void ForwardCheck()
 	{

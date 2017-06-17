@@ -23,7 +23,7 @@ public class ChracterTriggerEvent : MonoBehaviour
 		Debug.Log(collision.gameObject.name);
 		// death zone 감지.
 		if (collision.gameObject.CompareTag ("DeathZone")) {
-			m_movePlayer.SetState (CharacterBody.ePlayerState.Dead);
+			m_movePlayer.SetState (CharacterBody.ePlayerState.Dead, collision);
 		}
 	}
 
