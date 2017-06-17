@@ -19,6 +19,7 @@ public class SW_Shooting : TriggerRoot
     private bool m_bPlayAction = false;
     private float m_fGapTime = 0f;
     private float m_fSpeedTime = 0f;
+	protected List<int> m_dicFirstCheck = new List<int> ();
 
     private void Start()
     {
@@ -39,6 +40,9 @@ public class SW_Shooting : TriggerRoot
                 m_listMissile[i].SetActive(false);
             }
         }
+
+		m_dicFirstCheck.Clear ();
+
         base.Reset();
     }
 
@@ -79,7 +83,13 @@ public class SW_Shooting : TriggerRoot
                         int RandomY = Random.Range((int)m_vecMinArea.y, (int)m_vecMaxArea.y);
                         //float length = (m_vecMaxArea.z - m_vecMinArea.z)/2f;
                         //m_listMissile[i].transform.localPosition = m_Root.transform.localPosition;
-                        m_listMissile[i].transform.localPosition = new Vector3((float)RandomX, (float)RandomY, m_vecMaxArea.z);
+						if (m_dicFirstCheck.Contains (i) == true) {
+							m_listMissile [i].transform.localPosition = new Vector3 ((float)RandomX, (float)RandomY, m_vecMaxArea.z);
+						}
+						else {
+							m_dicFirstCheck.Add (i);
+							m_listMissile [i].transform.localPosition = new Vector3 ((float)RandomX, (float)RandomY, 0f);
+						}
                         m_listMissile[i].SetActive(true);
                         break;
                     }
