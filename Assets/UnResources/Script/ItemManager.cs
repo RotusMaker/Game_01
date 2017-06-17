@@ -14,6 +14,11 @@ public class ItemManager : MonoSingleton<ItemManager> {
 
 	private eSkillState m_eSkillSlot = eSkillState.None;	// 현재 장착된 스킬.
 
+	public void Reset()
+	{
+		m_eSkillSlot = eSkillState.None;
+	}
+
 	public void SetSlot(eSkillState skill)
 	{
 		m_eSkillSlot = skill;

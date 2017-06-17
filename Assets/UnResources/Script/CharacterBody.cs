@@ -286,6 +286,9 @@ public class CharacterBody : MonoBehaviour
 		m_nCurrentPos = 0;
 		m_deadCheck.isTrigging = false;
 		m_rigidbody.velocity = Vector3.zero;
+
+		// 아이템 슬롯 비우기.
+		ItemManager.GetInstance.Reset ();
 	}
 
 	public bool IsGoal()

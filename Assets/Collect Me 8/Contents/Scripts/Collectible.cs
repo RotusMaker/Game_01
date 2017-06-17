@@ -147,8 +147,9 @@ namespace C8
 		    }
 
 		    MeshObject.SetActive (false);
-		    ShadowObject.SetActive (false);
-	
+			if (ShadowObject != null) {
+				ShadowObject.SetActive (false);
+			}
 		    bCollected = true;
 
 		    OnCollected.Invoke (gameObject);
