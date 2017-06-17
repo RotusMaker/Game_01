@@ -20,11 +20,13 @@ public class ChracterTriggerEvent : MonoBehaviour
 
 	void OnCollisionEnter(Collision collision)
 	{
-		Debug.Log(collision.gameObject.name);
-		// death zone 감지.
-		if (collision.gameObject.CompareTag ("DeathZone")) {
+		// 실제 충돌 부분(패턴에 TouchAble 완료되면 풀기)
+		/*
+		if (collision.gameObject.CompareTag ("TouchAble") == false) {
+			Debug.Log("# Collision Enter Death. " + collision.gameObject.name);
 			m_movePlayer.SetState (CharacterBody.ePlayerState.Dead, collision);
 		}
+		*/
 	}
 
 	void OnTriggerEnter(Collider other)

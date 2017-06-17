@@ -6,6 +6,7 @@ public class DeadCheck : MonoBehaviour {
 	public bool isTrigging = false;
 	public int collDirection = -1;
 
+	// 예전 방식
 	void OnTriggerEnter(Collider other)
 	{
 		if (other.CompareTag ("TriggerBox")) {

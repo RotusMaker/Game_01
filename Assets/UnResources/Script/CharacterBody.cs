@@ -141,6 +141,7 @@ public class CharacterBody : MonoBehaviour
 			m_fDeadTimer += Time.deltaTime;
 			if (m_fDeadTimer >= 0.5f) {
 				m_fDeadTimer = 0f;
+				Debug.Log("# Stop Time Dead");
 				SetState (ePlayerState.Dead, new Vector3(0f, 0f, -1f), this.transform.position + Vector3.forward);
 				return;
 			}
@@ -176,6 +177,7 @@ public class CharacterBody : MonoBehaviour
 		if (m_ePlayerState == ePlayerState.Jump || m_ePlayerState == ePlayerState.TwoJump) {
 			if (m_groundCheck.isTrigging) {
 				if (m_groundCheck.touchTag.CompareTo ("death") == 0) {
+					Debug.Log("# Ground Check Dead");
 					SetState (ePlayerState.Dead);
 				}
 				else {
@@ -187,8 +189,8 @@ public class CharacterBody : MonoBehaviour
 		// Dead Check.
 		if (m_deadCheck.isTrigging || transform.localPosition.y <= -100f) 
 		{
-			//Debug.LogError("Dead Check: "+m_deadCheck.isTrigging.ToString()+" "+transform.localPosition.y.ToString());
-			GameManager.GetInstance.m_ui.OnDamageInfo(m_deadCheck.collDirection, 1f);
+			//Debug.Log("# Dead Check: "+m_deadCheck.isTrigging.ToString()+" "+transform.localPosition.y.ToString());
+			//GameManager.GetInstance.m_ui.OnDamageInfo(m_deadCheck.collDirection, 1f);
 			SetState (ePlayerState.Dead);
 		}
 
@@ -400,9 +402,11 @@ public class CharacterBody : MonoBehaviour
     {
         if (m_collisionForceInfomation.isSync == true)
         {
+			Debug.Log ("# OnDead ExplosionForce.");
             m_collisionForceInfomation.isSync = false;
-            this.m_rigidbody.AddForceAtPosition(m_collisionForceInfomation.m_dir * -200f, m_collisionForceInfomation.m_org);
-            Debug.LogWarning(string.Format("Dir:{0}, Org:{1}",m_collisionForceInfomation.m_dir,m_collisionForceInfomation.m_org));
+            //this.m_rigidbody.AddForceAtPosition(m_collisionForceInfomation.m_dir * -200f, m_collisionForceInfomation.m_org);
+			this.m_rigidbody.AddExplosionForce(1000f, m_collisionForceInfomation.m_org, 10f);
+            //Debug.Log(string.Format("Dir:{0}, Org:{1}",m_collisionForceInfomation.m_dir,m_collisionForceInfomation.m_org));
         }
     }
 
@@ -425,7 +429,7 @@ public class CharacterBody : MonoBehaviour
 				return;
 			}
 			// 한 프레임 당 이동거리 = 초기 위치 + velocity * deltaTime 보다 작으면
-			//Debug.Log(string.Format("forward object:{0} distance:{1}",hitInfo.collider.name,hitInfo.distance));
+			Debug.Log(string.Format("# Dead forward object:{0} distance:{1}",hitInfo.collider.name,hitInfo.distance));
 			SetState(ePlayerState.Dead);
 		}
 		//Debug.DrawRay (rayPos, Vector3.forward, Color.red, 5f);
