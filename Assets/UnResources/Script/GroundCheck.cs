@@ -8,8 +8,10 @@ public class GroundCheck : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
-		isTrigging = true;
-		touchTag = other.tag;
+		if (other.CompareTag ("TriggerBox") == false) {
+			isTrigging = true;
+			touchTag = other.tag;
+		}
 	}
 
 	void OnTriggerExit(Collider other)
