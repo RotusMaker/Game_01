@@ -19,6 +19,7 @@ public class SW_ShootingEditor : Editor
         myTarget.m_nMissileCnt = EditorGUILayout.IntField("Missile Count", myTarget.m_nMissileCnt);
         myTarget.m_fMissileSpeed = EditorGUILayout.FloatField("Missile Speed", myTarget.m_fMissileSpeed);
         myTarget.m_fMissileGenTime = EditorGUILayout.FloatField("Missile Gen Time", myTarget.m_fMissileGenTime);
+		myTarget.m_vecMissileRotate = EditorGUILayout.Vector3Field("Missile Rotation", myTarget.m_vecMissileRotate);
 
         EditorGUILayout.BeginVertical("box");
         GUILayout.Label(myTarget.m_updateDate);
@@ -59,6 +60,7 @@ public class SW_ShootingEditor : Editor
                 GameObject missile = GameObject.Instantiate(myTarget.m_Missile);
                 missile.transform.localScale = Vector3.one;
                 missile.transform.localPosition = Vector3.zero;
+				missile.transform.localRotation = Quaternion.Euler (myTarget.m_vecMissileRotate);
                 missile.transform.parent = myTarget.transform;
                 missile.layer = LayerMask.NameToLayer("Round");
                 myTarget.m_listMissile.Add(missile);

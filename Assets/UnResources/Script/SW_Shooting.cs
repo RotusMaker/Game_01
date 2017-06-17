@@ -12,6 +12,7 @@ public class SW_Shooting : TriggerRoot
     public float m_fMissileSpeed = 0f;  // 미사일 속도
     public float m_fMissileGenTime = 0f;    // 미사일 생성 간격
     public BoxCollider m_boxCollider;  // 미사일 나오는 영역 = Switch 영역
+	public Vector3 m_vecMissileRotate;	// 미사일 프리팹 각도 수정
     public string m_updateDate;
     
     private Vector3 m_vecMinArea = Vector3.zero;   // 미사일 영역 수치화
@@ -90,6 +91,7 @@ public class SW_Shooting : TriggerRoot
 							m_dicFirstCheck.Add (i);
 							m_listMissile [i].transform.localPosition = new Vector3 ((float)RandomX, (float)RandomY, 0f);
 						}
+						//m_listMissile [i].transform.localRotation = Quaternion.Euler (m_vecMissileRotate);
                         m_listMissile[i].SetActive(true);
                         break;
                     }
