@@ -71,7 +71,7 @@ public class UIPT_LITE_Demo03_LevelSelect : MonoBehaviour
 			GUIAnimSystemFREE.Instance.m_GUISpeed = 4.0f;
 			GUIAnimSystemFREE.Instance.m_AutoAnimation = false;
 		}
-
+        /*
 		// If this class is not running on Unity Editor, the resolution will be change to 960x600px for Lanscape demo scene or 540x960px for Portrait demo scene
 		if (Application.isEditor == false)
 		{
@@ -85,7 +85,7 @@ public class UIPT_LITE_Demo03_LevelSelect : MonoBehaviour
 					Screen.SetResolution(540, 960, false);
 			}
 		}
-
+        */
 	}
 
 	// Start is called on the frame when a script is enabled just before any of the Update methods is called the first time.
@@ -99,8 +99,6 @@ public class UIPT_LITE_Demo03_LevelSelect : MonoBehaviour
 			m_Page0.gameObject.SetActive(true);
 		if (m_Page1.gameObject.activeSelf == false)
 			m_Page1.gameObject.SetActive(true);
-
-
 	}
 
 	// Update is called once per frame.

@@ -67,6 +67,7 @@ public class UIPT_LITE_Demo01_IntroAndLoading : MonoBehaviour
 			GUIAnimSystemFREE.Instance.m_AutoAnimation = false;
 		}
 
+        /*
 		// If this class is not running on Unity Editor, the resolution will be change to 960x600px for Lanscape demo scene or 540x960px for Portrait demo scene
 		if (Application.isEditor == false)
 		{
@@ -79,9 +80,12 @@ public class UIPT_LITE_Demo01_IntroAndLoading : MonoBehaviour
 					Screen.SetResolution(540, 960, false);
 			}
 		}
+        */
 
-		// Deactivates m_Intro and m_Loading GameObjects.
-		m_Intro.SetActive(false);
+        Screen.SetResolution(540, 960, false);
+
+        // Deactivates m_Intro and m_Loading GameObjects.
+        m_Intro.SetActive(false);
 		m_Loading.SetActive(false);
 	}
 
