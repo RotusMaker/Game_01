@@ -6,9 +6,10 @@ public class GroundCheck : MonoBehaviour {
 	public bool isTrigging = false;
 	public string touchTag = string.Empty;
 
-	void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
 	{
-		if (other.CompareTag ("TriggerBox") == false) {
+		if (other.CompareTag ("TriggerBox") == false)
+        {
 			isTrigging = true;
 			touchTag = other.tag;
 		}

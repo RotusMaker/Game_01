@@ -142,7 +142,7 @@ public class CharacterBody : MonoBehaviour
 			if (m_fDeadTimer >= 0.5f) {
 				m_fDeadTimer = 0f;
 				Debug.Log("# Stop Time Dead");
-				SetState (ePlayerState.Dead, new Vector3(0f, 0f, -1f), this.transform.position + Vector3.forward);
+				SetState (ePlayerState.Dead, Vector3.back, this.transform.position + Vector3.forward);
 				return;
 			}
 		} 
@@ -178,7 +178,7 @@ public class CharacterBody : MonoBehaviour
 			if (m_groundCheck.isTrigging) {
 				if (m_groundCheck.touchTag.CompareTo ("death") == 0) {
 					Debug.Log("# Ground Check Dead");
-					SetState (ePlayerState.Dead);
+					SetState (ePlayerState.Dead, Vector3.down, m_groundCheck.transform.position);
 				}
 				else {
 					SetState (ePlayerState.Run);
@@ -187,12 +187,16 @@ public class CharacterBody : MonoBehaviour
 		}
 
 		// Dead Check.
-		if (m_deadCheck.isTrigging || transform.localPosition.y <= -100f) 
+		if (m_deadCheck.isTrigging) 
 		{
-			//Debug.Log("# Dead Check: "+m_deadCheck.isTrigging.ToString()+" "+transform.localPosition.y.ToString());
-			//GameManager.GetInstance.m_ui.OnDamageInfo(m_deadCheck.collDirection, 1f);
-			SetState (ePlayerState.Dead);
+            Debug.Log("# Dead Check Dead");
+            SetState (ePlayerState.Dead, m_deadCheck.collDirection, m_deadCheck.otherPosition); // 충돌 사
 		}
+        if (transform.localPosition.y <= -100f)
+        {
+            Debug.Log("# Fall Dead");
+            SetState(ePlayerState.Dead, false); // 낙사
+        }
 
 		// 충돌 체크.
 		//ForwardCheck();
@@ -311,41 +315,20 @@ public class CharacterBody : MonoBehaviour
         m_collisionForceInfomation.isSync = true;
         m_collisionForceInfomation.m_dir = dirVector;
         m_collisionForceInfomation.m_org = orgVector;
-        this.SetState(state, null);
+        this.SetState(state, true);
     }
 
-    public void SetState(ePlayerState state, Collision collision = null)
+    public void SetState(ePlayerState state, bool isCollision = false)
     {
-        if (collision == null)
-        {
-            m_collisionForceInfomation.isSync = false;
-        }
-        else
-        {
-            m_collisionForceInfomation.isSync = true;
+        m_collisionForceInfomation.isSync = isCollision;
 
-            // 충돌 사망시 방향을 알림.
-            // 충돌 점들의 평균.
-            Vector3 avgContact = Vector3.zero;
-            for (int i = 0; i < collision.contacts.Length; i++)
-            {
-                avgContact += collision.contacts[i].point;
-            }
-            avgContact /= (float)collision.contacts.Length;
-
-            // 충돌한 방향.
-            Vector3 dirVector = avgContact - this.transform.position;
-            dirVector.Normalize();
-
-            m_collisionForceInfomation.m_dir = dirVector;
-            m_collisionForceInfomation.m_org = avgContact;
-        }
-        
-		if (state == ePlayerState.None) {
+        if (state == ePlayerState.None) {
 			m_ePlayerState = ePlayerState.None;
+            this.transform.localRotation = Quaternion.identity;
 			m_rigidbody.useGravity = false;
 			m_rigidbody.isKinematic = true;
-		} 
+            m_rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+        } 
 		else 
 		{
 			if (m_ePlayerState != state) 
@@ -357,7 +340,8 @@ public class CharacterBody : MonoBehaviour
 
                 if (m_ePlayerState == ePlayerState.Dead)
                 {
-                    OnDead();
+                    m_rigidbody.constraints = RigidbodyConstraints.None;
+                    this.StartCoroutine(OnDead());
                 }
 			}
 		}
@@ -401,16 +385,19 @@ public class CharacterBody : MonoBehaviour
 		}
 	}
 
-    void OnDead()
+    IEnumerator OnDead()
     {
+        Debug.Log("# OnDead Call: "+m_collisionForceInfomation.isSync.ToString());
         if (m_collisionForceInfomation.isSync == true)
         {
 			Debug.Log ("# OnDead ExplosionForce.");
             m_collisionForceInfomation.isSync = false;
+            this.m_rigidbody.freezeRotation = false;
             //this.m_rigidbody.AddForceAtPosition(m_collisionForceInfomation.m_dir * -200f, m_collisionForceInfomation.m_org);
 			this.m_rigidbody.AddExplosionForce(1000f, m_collisionForceInfomation.m_org, 10f);
             //Debug.Log(string.Format("Dir:{0}, Org:{1}",m_collisionForceInfomation.m_dir,m_collisionForceInfomation.m_org));
         }
+        yield return null;
     }
 
 	private void ForwardCheck()
@@ -433,7 +420,7 @@ public class CharacterBody : MonoBehaviour
 			}
 			// 한 프레임 당 이동거리 = 초기 위치 + velocity * deltaTime 보다 작으면
 			Debug.Log(string.Format("# Dead forward object:{0} distance:{1}",hitInfo.collider.name,hitInfo.distance));
-			SetState(ePlayerState.Dead);
+			SetState(ePlayerState.Dead, Vector3.back, this.transform.position);
 		}
 		//Debug.DrawRay (rayPos, Vector3.forward, Color.red, 5f);
 	}

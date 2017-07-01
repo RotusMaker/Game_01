@@ -4,7 +4,8 @@ using System.Collections;
 public class DeadCheck : MonoBehaviour {
 
 	public bool isTrigging = false;
-	public int collDirection = -1;
+    public Vector3 collDirection = Vector3.one;
+    public Vector3 otherPosition = Vector3.one;
 
 	// 예전 방식
 	void OnTriggerEnter(Collider other)
@@ -12,24 +13,20 @@ public class DeadCheck : MonoBehaviour {
 		if (other.CompareTag ("TriggerBox")) {
 			return;
 		}
+
 		isTrigging = true;
 
-		if (other.transform.position.x > this.transform.position.x){
-			collDirection = 1;
-			
-		}
-		if (other.transform.position.x < this.transform.position.x){
-			collDirection = 0;
-		}
+        collDirection = other.transform.position - this.transform.position;
+        collDirection.Normalize();
 
-		if (collDirection != 0 && collDirection != 1) {
-			collDirection = -1;
-		}
-	}
+        otherPosition = other.transform.position;
+
+    }
 
 	void OnTriggerExit(Collider other)
 	{
 		isTrigging = false;
-		collDirection = -1;
-	}
+        collDirection = Vector3.one;
+        otherPosition = Vector3.one;
+    }
 }
