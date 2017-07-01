@@ -13,6 +13,7 @@ public class TriggerSkillItem : C8.Collectible
 
 		if (other.CompareTag ("Player")) {
 			gameObject.SetActive (false);
+            SoundManager.GetInstance.PlaySound("item_get", eSoundPlayType.OneShot);
 			ItemManager.GetInstance.SetSlot (skill);
 		}
 	}

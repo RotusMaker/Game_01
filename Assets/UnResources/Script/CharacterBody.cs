@@ -102,8 +102,9 @@ public class CharacterBody : MonoBehaviour
 		}
 
 		// 걸음걸이 소리
-		if (m_ePlayerState == ePlayerState.Run) {
-			SoundManager.GetInstance.PlaySound ("Walk_0", eSoundPlayType.OneShot);
+		if (m_ePlayerState == ePlayerState.Run)
+        {
+            SoundManager.GetInstance.PlayRandomPickSound(eSoundState.Fast_Step);
 		}
 
 		float purpose = 0f;
@@ -142,6 +143,7 @@ public class CharacterBody : MonoBehaviour
 			if (m_fDeadTimer >= 0.5f) {
 				m_fDeadTimer = 0f;
 				Debug.Log("# Stop Time Dead");
+                SoundManager.GetInstance.PlayRandomPickSound(eSoundState.Dead);
 				SetState (ePlayerState.Dead, Vector3.back, this.transform.position + Vector3.forward);
 				return;
 			}
@@ -178,6 +180,8 @@ public class CharacterBody : MonoBehaviour
 			if (m_groundCheck.isTrigging) {
 				if (m_groundCheck.touchTag.CompareTo ("death") == 0) {
 					Debug.Log("# Ground Check Dead");
+                    //SoundManager.GetInstance.PlayRandomPickSound(eSoundState.Hit_Dead);
+                    SoundManager.GetInstance.PlaySound("throne_hit", eSoundPlayType.OneShot);
 					SetState (ePlayerState.Dead, Vector3.down, m_groundCheck.transform.position);
 				}
 				else {
@@ -190,11 +194,13 @@ public class CharacterBody : MonoBehaviour
 		if (m_deadCheck.isTrigging) 
 		{
             Debug.Log("# Dead Check Dead");
+            SoundManager.GetInstance.PlayRandomPickSound(eSoundState.Hit_Dead);
             SetState (ePlayerState.Dead, m_deadCheck.collDirection, m_deadCheck.otherPosition); // 충돌 사
 		}
         if (transform.localPosition.y <= -100f)
         {
             Debug.Log("# Fall Dead");
+            SoundManager.GetInstance.PlaySound("fall_death", eSoundPlayType.OneShot);
             SetState(ePlayerState.Dead, false); // 낙사
         }
 
@@ -264,7 +270,7 @@ public class CharacterBody : MonoBehaviour
 			//Debug.Log( "move:" + x + "," + y +", d:" + dx +","+dy ); 
 			break;
 		case"dash":
-			SetState(ePlayerState.Dash);
+			SetState (ePlayerState.Dash);
 			break;
 		}
 	}
@@ -338,10 +344,16 @@ public class CharacterBody : MonoBehaviour
 				m_rigidbody.useGravity = true;
 				m_rigidbody.isKinematic = false;
 
-                if (m_ePlayerState == ePlayerState.Dead)
+                switch(m_ePlayerState)
                 {
-                    m_rigidbody.constraints = RigidbodyConstraints.None;
-                    this.StartCoroutine(OnDead());
+                    case ePlayerState.Dead:
+                        m_rigidbody.constraints = RigidbodyConstraints.None;
+                        this.StartCoroutine(OnDead());
+                        break;
+                    case ePlayerState.Dash:
+                        break;
+                    default:
+                        break;
                 }
 			}
 		}
@@ -354,10 +366,12 @@ public class CharacterBody : MonoBehaviour
 			if (m_ePlayerState == ePlayerState.Run) {
 				// 대쉬 아이템 먹었을때
 				if (ItemManager.GetInstance.UseSkill (eSkillState.Dash)) {
-					SetState (ePlayerState.Dash);
+                    SoundManager.GetInstance.PlayRandomPickSound(eSoundState.Dash);
+                    SetState (ePlayerState.Dash);
 				}
 				// 아이템 없으면 1단 점프
 				else {
+                    SoundManager.GetInstance.PlayRandomPickSound(eSoundState.Jump);
 					SetState (ePlayerState.Jump);
 					// ground check를 바로 다시하면 상태가 잘못 정해짐.
 					m_groundCheck.ResetGroundCheck ();
@@ -367,19 +381,22 @@ public class CharacterBody : MonoBehaviour
 			} else if (m_ePlayerState == ePlayerState.Jump) {
 				// 2단점프 아이템 먹으면 발동.
 				if (ItemManager.GetInstance.UseSkill (eSkillState.TwoJump)) {
-					SetState (ePlayerState.TwoJump);
+                    SoundManager.GetInstance.PlayRandomPickSound(eSoundState.Jump);
+                    SetState (ePlayerState.TwoJump);
 					m_rigidbody.velocity = new Vector3 (0f, 0f, m_rigidbody.velocity.z);
 					m_rigidbody.AddForce (Vector3.up * m_fJumpPower);
 				}
 				// 대쉬 아이템 먹었을때
 				else if (ItemManager.GetInstance.UseSkill (eSkillState.Dash)) {
-					SetState (ePlayerState.Dash);
+                    SoundManager.GetInstance.PlayRandomPickSound(eSoundState.Dash);
+                    SetState (ePlayerState.Dash);
 				}
 			} 
 			else {
 				// 대쉬 아이템 먹었을때
 				if (ItemManager.GetInstance.UseSkill (eSkillState.Dash)) {
-					SetState (ePlayerState.Dash);
+                    SoundManager.GetInstance.PlayRandomPickSound(eSoundState.Dash);
+                    SetState (ePlayerState.Dash);
 				}
 			}
 		}
