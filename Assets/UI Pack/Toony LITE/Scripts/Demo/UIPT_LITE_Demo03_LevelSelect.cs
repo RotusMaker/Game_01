@@ -234,11 +234,46 @@ public class UIPT_LITE_Demo03_LevelSelect : MonoBehaviour
 		UpdateArrowButtons();
 	}
 
-	public void Button_ClearedLevel()
+	public void Button_ClearedLevel(string meta)
 	{
 		// Play No button sound
 		UIPT_LITE_SoundController.Instance.Play_SoundNo();
-	}
+
+        string[] split = meta.Split('/');
+        if (split.Length == 2)
+        {
+            int stageType = 0;
+            int stageID = 1;
+            if (System.Int32.TryParse(split[0], out stageType))
+            {
+                stageType = 0;
+            }
+            if (System.Int32.TryParse(split[1], out stageID))
+            {
+                stageID = 1;
+            }
+            // 스테이지 맵으로 실행
+            StartCoroutine(LoadGameScene((eStageType)stageType, stageID));
+        }
+    }
+
+    IEnumerator LoadGameScene(eStageType stageType, int stageID)
+    {
+        //LoadPrefabManager.GetInstance.ResetBackground();
+        //LoadPrefabManager.GetInstance.ResetStage();
+        //string bgID = m_dicInputField ["bg"].text;
+        if (GameManager.GetInstance.m_gameLoadInfo == null)
+        {
+            GameManager.GetInstance.m_gameLoadInfo = new GameManager.GameLoadInfo();
+        }
+        GameManager.GetInstance.m_gameLoadInfo.mapID = 3;
+        GameManager.GetInstance.m_gameLoadInfo.stageID = stageID;
+        GameManager.GetInstance.m_gameLoadInfo.stageType = stageType;
+
+        AsyncOperation m_Async = null;
+        m_Async = SceneManager.LoadSceneAsync("GameScene");
+        yield return m_Async;
+    }
 
 	public void Button_CurrentLevel(GameObject goButton)
 	{

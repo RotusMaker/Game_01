@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public enum eStageType
 {
@@ -17,10 +18,10 @@ public class GameManager : MonoSingleton<GameManager>
 		public int stageID;
 		public eStageType stageType = eStageType.R;
 	}
-	
-	public GameObject m_player;
-	public GameObject m_root;
-	public InGameUI m_ui;
+
+    [HideInInspector] public GameObject m_player;
+    [HideInInspector] public GameObject m_root;
+    [HideInInspector] public InGameUI m_ui;
 	[HideInInspector] public GameLoadInfo m_gameLoadInfo = null;
 	private CharacterBody m_movePlayer;
 	[HideInInspector] public int m_nGameScore = 0;
@@ -52,14 +53,24 @@ public class GameManager : MonoSingleton<GameManager>
 			EnterState (m_gameState);
 		}
 	}
-
+    
 	void Start ()
 	{
+        /*
 		m_movePlayer = m_player.GetComponent<CharacterBody> ();
 		m_movePlayer.ResetGame (m_fDistance);
-
 		SetState (eGameState.None);
+        */
 	}
+
+    public void InitManager(CharacterBody player, GameObject root)
+    {
+        m_root = root;
+        //m_movePlayer = m_player.GetComponent<CharacterBody>();
+        m_movePlayer = player;
+        m_movePlayer.ResetGame(m_fDistance);
+        SetState(eGameState.None);
+    }
 	
 	void Update () 
 	{
@@ -73,7 +84,10 @@ public class GameManager : MonoSingleton<GameManager>
 		case eGameState.Loading_Background:
 			{
 				//Debug.Log ("Background Load.");
-				m_ui.OnLoading(true, "Background Loading...");
+                if (m_ui != null)
+                {
+                    m_ui.OnLoading(true, "Background Loading...");
+                }
 				if (m_gameLoadInfo != null) {
 					LoadPrefabManager.GetInstance.LoadMap (m_gameLoadInfo.mapID, m_root.transform);
 				}
@@ -81,7 +95,10 @@ public class GameManager : MonoSingleton<GameManager>
 			break;
 		case eGameState.Loading_Stage:
 			{
-				m_ui.OnLoading(true, "Stage Loading...");
+                if (m_ui != null)
+                {
+                    m_ui.OnLoading(true, "Stage Loading...");
+                }
 				if (m_gameLoadInfo != null) {
 					LoadPrefabManager.GetInstance.LoadStage (m_gameLoadInfo.stageType, m_gameLoadInfo.stageID, m_root.transform);
 				}
@@ -89,7 +106,10 @@ public class GameManager : MonoSingleton<GameManager>
 			break;
 		case eGameState.Ready:
 			{
-				m_ui.OnLoading(true, "Character Loading...");
+                if (m_ui != null)
+                {
+                    m_ui.OnLoading(true, "Character Loading...");
+                }
 				GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageType, m_gameLoadInfo.stageID);
 				Transform startPos = stageObj.transform.FindChild ("StartPosition");
 				if (startPos != null) {
@@ -100,7 +120,10 @@ public class GameManager : MonoSingleton<GameManager>
 			break;
 		case eGameState.Play:
 			{
-				m_ui.OnLoading(false, "Go");
+                if (m_ui != null)
+                {
+                    m_ui.OnLoading(false, "Go");
+                }
 				m_movePlayer.SetState (CharacterBody.ePlayerState.Run);
 			}
 			break;
@@ -127,7 +150,10 @@ public class GameManager : MonoSingleton<GameManager>
 					if (m_fScoreTick >= 0.1f) {
 						m_fScoreTick = 0f;
 						m_nGameScore += 1;
-						m_ui.SetScoreText (m_nGameScore);
+                        if (m_ui != null)
+                        {
+                            m_ui.SetScoreText(m_nGameScore);
+                        }
 					}
 				}
 			}
@@ -135,7 +161,10 @@ public class GameManager : MonoSingleton<GameManager>
 		case eGameState.Loading_Background:
 			{
 				//Debug.Log (string.Format("{0}% Loading...",LoadPrefabManager.GetInstance.m_fCurrentProgress));
-				m_ui.OnLoading(true, string.Format("Background Loading...{0}%",LoadPrefabManager.GetInstance.m_fCurrentProgress));
+                if (m_ui != null)
+                {
+                    m_ui.OnLoading(true, string.Format("Background Loading...{0}%", LoadPrefabManager.GetInstance.m_fCurrentProgress));
+                }
 				if (LoadPrefabManager.GetInstance.m_bLoaded == true) 
 				{
 					SetState (eGameState.Loading_Stage);
@@ -145,7 +174,10 @@ public class GameManager : MonoSingleton<GameManager>
 		case eGameState.Loading_Stage:
 			{
 				//Debug.Log (string.Format("{0}% Loading...",LoadPrefabManager.GetInstance.m_fCurrentProgress));
-				m_ui.OnLoading(true, string.Format("Stage Loading...{0}%",LoadPrefabManager.GetInstance.m_fCurrentProgress));
+                if (m_ui != null)
+                {
+                    m_ui.OnLoading(true, string.Format("Stage Loading...{0}%", LoadPrefabManager.GetInstance.m_fCurrentProgress));
+                }
 				if (LoadPrefabManager.GetInstance.m_bLoaded == true) 
 				{
 					SetState (eGameState.Ready);
@@ -180,9 +212,12 @@ public class GameManager : MonoSingleton<GameManager>
 	IEnumerator ResetGame()
 	{
 		m_nGameScore = 0;
-		m_ui.SetScoreText (0);
-		m_ui.OnDamageInfo (0, 0f);
-		m_ui.OnDamageInfo (1, 0f);
+        if (m_ui != null)
+        {
+            m_ui.SetScoreText(0);
+            m_ui.OnDamageInfo(0, 0f);
+            m_ui.OnDamageInfo(1, 0f);
+        }
 		m_movePlayer.ResetGame(m_fDistance);
 		//Debug.LogWarning ("Distance: " + m_fDistance.ToString());
 		yield return null;
@@ -240,8 +275,22 @@ public class GameManager : MonoSingleton<GameManager>
 		yield return null;
 		m_fDistance = m_movePlayer.transform.localPosition.z;
 		string content = string.Format("{0}\n{1}Point",success?"Success!":"Failed!",m_nGameScore);
-		this.m_ui.ActiveResultPopup (true, content, m_fDistance, m_fDistance*2f);	//결과 팝업을 띄움.
-	}
+        if (m_ui != null)
+        {
+            m_ui.ActiveResultPopup(true, content, m_fDistance, m_fDistance * 2f);	//결과 팝업을 띄움.
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        // 레벨 씬으로 이동
+        /*
+        AsyncOperation m_Async = null;
+        m_Async = SceneManager.LoadSceneAsync("ToonyLITE Demo 03 - Landscape - Level Select");
+        yield return m_Async;
+        */
+
+        RestartGame();
+    }
 
 	public void RestartGame(float startDistance = 0f)
 	{

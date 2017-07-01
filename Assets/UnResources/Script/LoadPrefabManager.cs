@@ -27,6 +27,26 @@ public class LoadPrefabManager : MonoSingleton<LoadPrefabManager>
 		return null;
 	}
 
+    // 만들어진건 강제로 추가
+    public void SetStage(eStageType stageType, int stageID, GameObject stage)
+    {
+        string stageName = string.Format("Round_{0}_{1:00}", stageType.ToString(), stageID);
+        if (m_dicStage.ContainsKey(stageName) == false)
+        {
+            m_dicStage.Add(stageName, stage);
+        }
+    }
+
+    public void SetMap(int mapID, GameObject map)
+    {
+        string mapName = string.Format("Map_{0:00}", mapID);
+
+        if (m_dicBackground.ContainsKey(mapName) == false)
+        {
+            m_dicBackground.Add(mapName, map);
+        }
+    }
+
 	public void LoadStage(eStageType stageType, int stageID, Transform parent)
 	{
 		m_bLoaded = false;
