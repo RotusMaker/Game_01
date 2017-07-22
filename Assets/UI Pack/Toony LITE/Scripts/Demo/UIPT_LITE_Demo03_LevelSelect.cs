@@ -99,7 +99,10 @@ public class UIPT_LITE_Demo03_LevelSelect : MonoBehaviour
 			m_Page0.gameObject.SetActive(true);
 		if (m_Page1.gameObject.activeSelf == false)
 			m_Page1.gameObject.SetActive(true);
-	}
+
+        Button_NextPage();
+        Button_PreviousPage();
+    }
 
 	// Update is called once per frame.
 	void Update()
