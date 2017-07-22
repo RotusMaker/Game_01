@@ -247,11 +247,13 @@ public class UIPT_LITE_Demo03_LevelSelect : MonoBehaviour
         {
             int stageType = 0;
             int stageID = 1;
-            if (System.Int32.TryParse(split[0], out stageType))
+            // 파싱 실패하면 0
+            if (System.Int32.TryParse(split[0], out stageType) == false)
             {
                 stageType = 0;
             }
-            if (System.Int32.TryParse(split[1], out stageID))
+            // 파싱 실패하면 1
+            if (System.Int32.TryParse(split[1], out stageID) == false)
             {
                 stageID = 1;
             }
