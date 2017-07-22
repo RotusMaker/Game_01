@@ -148,6 +148,20 @@ public class LoadPrefabManager : MonoSingleton<LoadPrefabManager>
 		m_bLoaded = true;
 	}
 
+    public void ClearData()
+    {
+        for (Dictionary<string, GameObject>.Enumerator it = m_dicBackground.GetEnumerator(); it.MoveNext();)
+        {
+            DestroyImmediate(it.Current.Value);
+        }
+        for (Dictionary<string, GameObject>.Enumerator it = m_dicStage.GetEnumerator(); it.MoveNext();)
+        {
+            DestroyImmediate(it.Current.Value);
+        }
+        m_dicBackground.Clear();
+        m_dicStage.Clear();
+    }
+
 	public void ResetBackground()
 	{
 		for (Dictionary<string, GameObject>.Enumerator it = m_dicBackground.GetEnumerator (); it.MoveNext ();) 

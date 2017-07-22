@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameSceneManager : MonoBehaviour
 {
@@ -22,5 +23,20 @@ public class GameSceneManager : MonoBehaviour
         // 게임 매니저 초기화 & 실행
         GameManager.GetInstance.InitManager(m_character, m_root);
         GameManager.GetInstance.SetState(GameManager.eGameState.Loading_Background);
+    }
+
+    public void Button_Exit()
+    {
+        StartCoroutine(LoadLevelSelectScene());
+    }
+
+    IEnumerator LoadLevelSelectScene()
+    {
+        LoadPrefabManager.GetInstance.ClearData();
+        GameManager.GetInstance.ChangeScene();
+
+        AsyncOperation m_Async = null;
+        m_Async = SceneManager.LoadSceneAsync("ToonyLITE Demo 03 - Landscape - Level Select");
+        yield return m_Async;
     }
 }

@@ -77,6 +77,11 @@ public class GameManager : MonoSingleton<GameManager>
 		DoState (GetGameState ());
 	}
 
+    public void ChangeScene()
+    {
+        this.StopAllCoroutines();
+    }
+
 	private void EnterState(eGameState state)
 	{
 		switch(m_gameState)
@@ -224,10 +229,6 @@ public class GameManager : MonoSingleton<GameManager>
 		GameObject stageObj = LoadPrefabManager.GetInstance.GetStage (m_gameLoadInfo.stageType,m_gameLoadInfo.stageID);
 		yield return StartCoroutine(SearchTrigger (stageObj));
 		SetState (eGameState.Play);
-	}
-
-	private void LoadGame(string sectionName, int stageNumber)
-	{
 	}
 
 	// 연산이 좀 많음.
